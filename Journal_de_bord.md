@@ -59,7 +59,7 @@ J'ai terminé le trello je vais maintenant faire le canvas du site
 J'ai terminé la page Canvas, je vais à présent faire le CRUD pour les utilisateurs en commencent par créer une base de donnée pour le site, j'ajouterai les tables et leurs champs qui sont indiqué dans le MCD de l'énoncé.
 
 ### 16:42
-J'ai crée la base de donnée et ai pu importer mes ancienne fonctions pour la partie utilisateurs mais je n'ai pas fini de les adapter au site.
+J'ai crée la base de donnée et ai pu importer mes ancienne fonctions pour la partie utilisateurs mais je n'ai pas fini de les adapter au site. J'ai avant ça fait une partie de la documentation
 
 ## Bilan de la journée
 Cette journée aura été un peu catastrophique pour moi car je n'ai pas réussi à finir une tâche dans les temps car j'ai pris trop de temps à faire le planning prévisionnel, je le finirai la prochaine fois. J'ai pu au moins faire le canvas, le planning prévisionnel, lire l'énoncé et créer mon github + mon trello
