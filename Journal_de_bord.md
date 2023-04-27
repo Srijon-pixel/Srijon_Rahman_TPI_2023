@@ -26,7 +26,7 @@ C'est ma pose je reprend le travail à 10h05
 Je reprende le travail sur la plannification
 
 ### 11:20
-J'ai encore posé des questions 
+J'ai encore posé des questions sur le planning à mon maître, c'était pour me conseiller sur comment bien ajuster le temps sur mes tâches.
 
 ### 11:40
 C'est ma pause déjeuner. Je terminerai la plannification quand ça reprendra.
@@ -37,7 +37,7 @@ Je reprende le travail sur la plannification et je dois le terminer avant
 ### 13:15
 Visite de l'expert monsieur Borys Folomietow, il m'a posé des questions sur mon projet, si j'avais des question etc... et ensuite je parlais de ce je faisais à ce moment-là et des tâches déjà faites
 
-### 13:40
+### 13:38
 J'ai enfin terminé la planning prévisionnel, je vais de ce pas l'envoyé à mon maître et à mes experts par mail en format PDF.
 
 ### 13:50
@@ -48,3 +48,12 @@ J'ai réglé le problème en utilisant un site qui extrait les pages en trop du 
 
 ### 14:15
 C'est la grande pause, je reprendrai mon travail sur définir les tâches du trello plus tard car jusqu'à maintenant je ne l'ai que créer à 08:21 (j'ai oublié de le préciser), puis l'ai laisser pour plus tard.
+
+### 14:35
+Fin de la grande pause je reprend le trello
+
+### 15:26
+J'ai terminé le trello je vais maintenant faire le canvas du site
+
+### 15:51
+J'ai terminé la page Canvas, je vais à présent faire le CRUD pour les utilisateurs en commencent par créer une base de donnée pour le site, j'ajouterai les tables et leurs champs qui sont indiqué dans le MCD de l'énoncé.
