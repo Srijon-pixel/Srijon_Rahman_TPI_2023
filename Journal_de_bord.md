@@ -44,4 +44,7 @@ J'ai enfin terminé la planning prévisionnel, je vais de ce pas l'envoyé à mo
 J'ai un petit problème avec mon fichier excel, j'essaye de le convertire en pdf mais rajoute des pages qui sont des morceau du tableaux.
 
 ### 13:52
-J'ai réglé le problème en utilisant un site qui extrait les pages en trop du fichier et les séparent tous en les mettant dans un fichier chacun. Voici le lien du site qui m'a aidé: https://www.ilovepdf.com/split_pdf#split,extract 
+J'ai réglé le problème en utilisant un site qui extrait les pages en trop du fichier et les séparent tous en les mettant dans un fichier chacun. Voici le lien du site qui m'a aidé: https://www.ilovepdf.com/split_pdf#split,extract
+
+### 14:15
+C'est la grande pause, je reprendrai mon travail sur définir les tâches du trello plus tard car jusqu'à maintenant je ne l'ai que créer à 08:21 (j'ai oublié de le préciser), puis l'ai laisser pour plus tard.
