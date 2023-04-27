@@ -1,0 +1,17 @@
+/*
+* Auteur: Srijon Rahman
+* Date: 04.04.2023
+* Projet: TPI video game club
+* Détail: Gère en grande partie le visuel du site
+*/
+
+
+footer {
+    color: white;
+    background-color: rgba(49, 49, 49, 0.801);
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
