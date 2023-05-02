@@ -76,3 +76,6 @@ C'est bon j'ai corrigé mon canevas maintenant je continue le CRUD pour l'utilis
 
 ### 09:40 
 C'est ma pause, je reprendrai le travail plus tard.
+
+### 10:05
+Fin de la pause, je reprend le travail.
