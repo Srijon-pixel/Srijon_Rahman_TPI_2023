@@ -63,3 +63,13 @@ J'ai crée la base de donnée et ai pu importer mes ancienne fonctions pour la p
 
 ## Bilan de la journée
 Cette journée aura été un peu catastrophique pour moi car je n'ai pas réussi à finir une tâche dans les temps car j'ai pris trop de temps à faire le planning prévisionnel, je le finirai la prochaine fois. J'ai pu au moins faire le canvas, le planning prévisionnel, lire l'énoncé et créer mon github + mon trello
+
+## 02.05.23
+### 07:30
+C'est le deuxième jour et je vais à présent faire une partie l'analyse fonctionnelle de la documentation technique pendant environ 1 heure.
+
+### 08:31
+J'ai fini une partie de l'analyse fonctionnelle en ajoutant des maquettes sur le canevas et sur la partie utilisateurs et en expliquer de quoi il s'agissait. Maintenant je vais reprendre mon code  en commençant par modifier un petit peu le canvas pour qu'il soit comme l'indiqué la maquette dans la documentation technique.
+
+### 08:42
+C'est bon j'ai corrigé mon canevas maintenant je continue le CRUD pour l'utilisateur.
