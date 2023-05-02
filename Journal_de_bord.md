@@ -84,4 +84,16 @@ Fin de la pause, je reprend le travail.
 J'ai fini le CRUD pour la partie de l'utilisateur maintenant je m'attaque à la vue de la page d'identification
 
 ### 11:40
-C'est ma pause déjeuner, je reprendrai le code plus tard, j'ai bientôt fini la page d'identification, je pense le finir à temps avant de passer à la page d'inscription. J'ai aussi modifier quelques détaille du canevas pour l'énoncé. 
+C'est ma pause déjeuner, je reprendrai le code plus tard, j'ai bientôt fini la page d'identification, je pense le finir à temps avant de passer à la page d'inscription. J'ai aussi modifier quelques détaille comme la syntaxe de mes variables du canevas pour l'énoncé.
+
+### 12:40
+C'est la fin de ma pause déjeuner, je reprend le code.
+
+### 12h59
+J'ai fini la page pour l'identification, maintenant je fais la page d'inscription. 
+
+### 15:58
+J'ai décidé de mettre un lien pour la page profil près du bouton de connexion/deconnexion pour permettre àl'utilisateur standard de visiter son profil
+
+## Bilan de la journée
+J'ai réussi à rattraper mon retard et ai pu finir mes tâches d'aujourd'hui. Je pense vraiment qu'avec ce rythme je pourrai finir plutôt que prévu.

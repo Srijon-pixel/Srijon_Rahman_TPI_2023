@@ -11,12 +11,12 @@ require_once './fonctions/fonction_utilisateur.php';
 /**
  * @var string les clés utilisé pour identifier l'utilisateur par sa session
  */
-define('SESSION_KEY_ID_USER', 'idUser');
+define('SESSION_KEY_ID_USER', 'idUtilisateur');
 
 
-function GetUserFromSession()
+function RecupereUtilisateurParSession()
 {
-    if (!StartSession()) {
+    if (!DebutSession()) {
         return false;
     }
     if (isset($_SESSION[SESSION_KEY_ID_USER])) {
@@ -25,7 +25,7 @@ function GetUserFromSession()
     return false;
 }
 
-function StartSession()
+function DebutSession()
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
         return true;
@@ -37,10 +37,3 @@ function StartSession()
     }
 }
 
-
-function DestroySession()
-{
-    StartSession();
-    $_SESSION = [];
-    session_destroy();
-}

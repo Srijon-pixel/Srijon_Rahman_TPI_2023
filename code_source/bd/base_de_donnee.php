@@ -5,7 +5,6 @@
  */
 require_once './config/conparam.php';
 
-
 class EDatabase
 {
 

@@ -58,12 +58,12 @@ function RecupereToutLesUtilisateurs()
  *
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
-function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $statut, $motDePasse)
+function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 {
-	$sql = "INSERT INTO `video_game_club`.`utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,:s,:m)";
+	$sql = "INSERT INTO `video_game_club`.`utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,0,:m)";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":s" => $statut, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
+		$statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
 	} catch (PDOException $e) {
 		return false;
 	}
@@ -136,7 +136,7 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
 {
 	$arr = array();
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
-	`utilisateur`.`email`,  `utilisateur`.`statut` FROM utilisateur
+	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur
     WHERE utilisateur.idUtilisateur = :i";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {

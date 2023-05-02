@@ -24,17 +24,17 @@
     require_once './fonctions/fonction_session.php';
 
 
-    $utilisateur = GetUserFromSession();
+    $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
 
     if ($utilisateur != false) {
-        $nomUtilisateur = $utilisateur->pseudo;
+        $nomUtilisateur = $utilisateur[0]->pseudo;
         $boutonDirection = '/logout.php';
         $boutonTexte = 'Déconnexion';
-        $boutonParametre = '<button class="btn"><a href="./account.php?id=' . $utilisateur->idUtilisateur . '">Compte</a></button>';
+        $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     }
     ?>
 
@@ -46,10 +46,7 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./identification.php"> Identification </a></li>
-                    <li class="nav-item"><a class="nav-link" href="./inscription.php"> Inscription </a></li>
-                    <li class="nav-item"><a class="nav-link" href="./profil.php">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">

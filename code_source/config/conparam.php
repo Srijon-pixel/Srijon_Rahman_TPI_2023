@@ -19,7 +19,7 @@ define('EDB_DBTYPE', "mysql");
 define('EDB_DBNAME', "video_game_club");
 define('EDB_HOST', "127.0.0.1");
 define('EDB_PORT', "3306");
-define('EDB_USER', "TPI");
-define('EDB_PASS', "VideoGameClub$7");
+define('EDB_USER', "root");
+define('EDB_PASS', "");
 
 
