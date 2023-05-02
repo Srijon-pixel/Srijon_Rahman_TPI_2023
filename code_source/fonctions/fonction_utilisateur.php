@@ -6,8 +6,8 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
  */
-require_once './db/database.php';
-require_once './class/user.php';
+require_once './bd/base_de_donnee.php';
+require_once './classe/utilisateur.php';
 
 
 
@@ -33,7 +33,7 @@ function getAllUser()
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
 		// On crée l'objet EUser en l'initialisant avec les données provenant
 		// de la base de données
-		$c = new EUser(
+		$c = new EUtilisateur(
 			intval($row['id_user']),
 			$row['username'],
 			$row['email'],
@@ -154,7 +154,7 @@ function getDataUserById($idUser)
 	}
 	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-		$c = new EUser(
+		$c = new EUtilisateur(
 			intval($row['id_user']),
 			$row['username'],
 			$row['email'],

@@ -72,4 +72,7 @@ C'est le deuxième jour et je vais à présent faire une partie l'analyse foncti
 J'ai fini une partie de l'analyse fonctionnelle en ajoutant des maquettes sur le canevas et sur la partie utilisateurs et en expliquer de quoi il s'agissait. Maintenant je vais reprendre mon code  en commençant par modifier un petit peu le canvas pour qu'il soit comme l'indiqué la maquette dans la documentation technique.
 
 ### 08:42
-C'est bon j'ai corrigé mon canevas maintenant je continue le CRUD pour l'utilisateur.
+C'est bon j'ai corrigé mon canevas maintenant je continue le CRUD pour l'utilisateur. Pour ce faire j'ai implémenté des fonctions auquel j'avais fais avec des collègues lors du Module 306
+
+### 09:40 
+C'est ma pause, je reprendrai le travail plus tard.

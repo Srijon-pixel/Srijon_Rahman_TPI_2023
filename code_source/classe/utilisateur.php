@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Classe container user
+ * 
  */
-class EUser
+class EUtilisateur
 {
 
     /**
@@ -15,15 +15,13 @@ class EUser
      * @param bool $InActif Indique si le compte existe ou non
      * @param integer $InAdmin l'identifiant de l'administrateur
      */
-    public function __construct($InIdUser, $InUsername, $InEmail, $InPassword, $InActif, $InAdmin)
+    public function __construct($InIdUtilisateur, $InNom, $InPrenom, $InPseudo, $InEmail, $InMotDePasse)
     {
 
-        $this->id_user = $InIdUser;
-        $this->username = $InUsername;
+        $this->idUtilisateur = $InIdUtilisateur;
+        $this->pseudo = $InPseudo;
         $this->email = $InEmail;
-        $this->password = $InPassword;
-        $this->actif = $InActif;
-        $this->admin = $InAdmin;
+        $this->password = $InMotDePasse;
     }
 
 
@@ -31,11 +29,11 @@ class EUser
     /**
      * @var integer L'identifiant du budget
      */
-    public $id_user;
+    public $idUtilisateur;
     /**
      * @var string nom de l'utilisateur
      */
-    public $username;
+    public $pseudo;
     /**
      * @var string email de l'utilisateur
      */
@@ -44,14 +42,4 @@ class EUser
      * @var string mot de passe de l'utilisateur
      */
     public $password;
-
-    /**
-     * @var bool indique l'existance du compte
-     */
-    public $actif;
-    /**
-     * @var integer identifiant de l'administrateur
-     */
-    public $admin;
-}
 ?>

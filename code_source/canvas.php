@@ -20,8 +20,22 @@
     <?php
 
     //Permet d'utiliser les fonctions du fichier 
-    require_once './functions/function_user.php';
-    require_once './functions/function_session.php';
+    require_once './fonctions/fonction_utilisateur.php';
+    require_once './fonctions/fonction_session.php';
+
+
+    $user = GetUserFromSession();
+    $userName = 'invité';
+    $btnDirection = '/identification.php';
+    $btnText = 'Connexion';
+    $btnParametre = '';
+
+    if ($user != false) {
+        $userName = $user->pseudo;
+        $btnDirection = '/logout.php';
+        $btnText = 'Déconnexion';
+        $btnParametre = '<button class="btn"><a href="./account.php?id=' . $user->idUtilisateur . '">Compte</a></button>';
+    }
     ?>
 
     <header>
@@ -37,7 +51,13 @@
                     <li class="nav-item"><a class="nav-link" href="./inscription.php"> Inscription </a></li>
                     <li class="nav-item"><a class="nav-link" href="./profil.php">Profile</a></li>
                 </ul>
-
+                <div class="card d-flex flex-column align-items-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><?= $userName ?></h5>
+                        <?= $btnParametre ?>
+                        <a href="<?= $btnDirection ?>" class="btn btn-primary"><?= $btnText ?></a>
+                    </div>
+                </div>
             </div>
         </nav>
 
