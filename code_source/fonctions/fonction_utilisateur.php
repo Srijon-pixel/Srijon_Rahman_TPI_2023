@@ -14,15 +14,15 @@ require_once './classe/utilisateur.php';
 /**
  * Récupère toutes les utilisateurs de la base de donnée
  *
- * @return array|bool Un tableau des EUser
+ * @return array|bool Un tableau des EUtilisateur
  *                    False si une erreur
  */
-function getAllUser()
+function RecupereToutLesUtilisateurs()
 {
 	$arr = array();
 
-	$sql = "SELECT `users`.`id_user`, `users`.`username`, `users`.`email`, 
-	`users`.`password`, `users`.`actif`, `users`.`admin` FROM users WHERE users.actif = 1";
+	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
+	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute();
@@ -31,18 +31,19 @@ function getAllUser()
 	}
 	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-		// On crée l'objet EUser en l'initialisant avec les données provenant
+		// On crée l'objet EUtilisateur en l'initialisant avec les données provenant
 		// de la base de données
 		$c = new EUtilisateur(
-			intval($row['id_user']),
-			$row['username'],
+			intval($row['idUtilisateur']),
+			$row['nom'],
+			$row['prenom'],
+			$row['pseudo'],
 			$row['email'],
-			$row['password'],
-			$row['actif'] = 1,
-			$row['admin']
+			$row['statut'],
+			$row['motDePasse']
 
 		);
-		// On place l'objet EUser créé dans le tableau
+		// On place l'objet EUtilisateur créé dans le tableau
 		array_push($arr, $c);
 	}
 
@@ -55,17 +56,14 @@ function getAllUser()
 /**
  * Insère l'utilisateur dans la base de donnée
  *
- * @param integer $username le nom de l'utilisateur
- * @param string $email l'email de l'utilisateur
- * @param string $password le mot de passe de l'utilisateur
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
-function addUser($username, $email, $password)
+function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $statut, $motDePasse)
 {
-	$sql = "INSERT INTO `db_caps`.`users` (`username`, `email`, `password`) VALUES(:u,:e,:p)";
+	$sql = "INSERT INTO `video_game_club`.`utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,:s,:m)";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statement->execute(array(":u" => $username, ":e" => $email, ":p" => password_hash($password, PASSWORD_BCRYPT)));
+		$statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":s" => $statut, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
 	} catch (PDOException $e) {
 		return false;
 	}
@@ -73,41 +71,35 @@ function addUser($username, $email, $password)
 	return true;
 }
 
-/**
- * Rend le compte de l'utilisateur inactif et donc impossible de se connecter avec
- *
- * @param integer $idUser l'identifiant de l'utilisateur
- * @return bool true si la requête a été correctement effectué, sinon false 
+/** 
+ * Supprime définitivement l'utilisateur de la base de donnée 
+ * @param int $idUtilisateur identifiant unique de l'utilisateur
  */
-function desactivateUser($idUser)
+function SupprimerUtilisateur($idUtilisateur)
 {
-	$sql = "UPDATE db_caps.users SET users.actif = 0 WHERE `users`.`id_user` = :u";
+	$sql = "DELETE FROM `video_game_club`.`utilisateur` WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statement->execute(array(":u" => $idUser));
+		$statement->execute(array(":i" => $idUtilisateur));
 	} catch (PDOException $e) {
 		return false;
 	}
-	// Done
+	// Fini
 	return true;
 }
 
 /**
  * Modifie les données de l'utilisateur dans la base de donnée
  *
- * @param integer $idUser L'identifiant de l'utilisateur
- * @param string $username le nom de l'utilisateur
- * @param string $email l'email de l'utilisateur
- * @param string $password le mot de passe de l'utilisateur
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifyUser($idUser, $username, $email, $password)
+function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 {
-	$sql = "UPDATE `db_caps`.`users` SET users.username = :n, users.email = :e, users.password = :p  
-	WHERE `users`.`id_user` = :u";
+	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`nom` = :n, `utilisateur`.`prenom` = :pr, 
+	`utilisateur`.`pseudo` = :ps, `utilisateur`.`email` = :e WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statement->execute(array(":u" => $idUser, ":n" => $username, ":e" => $email, ":p" => password_hash($password, PASSWORD_BCRYPT)));
+		$statement->execute(array(":i" => $idUtilisateur, ":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email));
 	} catch (PDOException $e) {
 		return false;
 	}
@@ -118,18 +110,17 @@ function modifyUser($idUser, $username, $email, $password)
 /**
  * Vérifie si le mot de passe répond aux critères pour la syntax
  *
- * @param string $password le mot de pass de l'utilisateur
+ * @param string $motDePasse le mot de passe de l'utilisateur
  * @return bool true si le mot de passe répond à tous les critères, sinon false 
  */
-function CheckPasswordSyntax($password)
+function motDePasseSyntax($motDePasse)
 {
-	$uppercase = preg_match('@[A-Z]@', $password);
-	$lowercase = preg_match('@[a-z]@', $password);
-	$number    = preg_match('@[0-9]@', $password);
-	$specialChars = preg_match('@[^\w]@', $password);
+	$majuscule = preg_match('@[A-Z]@', $motDePasse);
+	$minuscule = preg_match('@[a-z]@', $motDePasse);
+	$nombre    = preg_match('@[0-9]@', $motDePasse);
 
-	if ($uppercase && $lowercase && $number && $specialChars && strlen($password) >= 8) {
-		return $password;
+	if ($majuscule && $minuscule && $nombre && strlen($motDePasse) >= 8) {
+		return $motDePasse;
 	}
 	return false;
 }
@@ -137,30 +128,33 @@ function CheckPasswordSyntax($password)
 /**
  * Récupère toutes les données d'un utilisateur de la base de donnée
  *
- * @param integer $idUser L'identifiant de l'utilisateur
- * @return array|bool Un tableau des EUser
+ * @param integer $idUtilisateur L'identifiant de l'utilisateur
+ * @return array|bool Un tableau des EUtilisateur
  *                    False si une erreur
  */
-function getDataUserById($idUser)
+function RecuperationDonneeUtilisateur($idUtilisateur)
 {
 	$arr = array();
-	$sql = "SELECT users.id_user, users.username, users.email, users.password, `users`.`actif`, `users`.`admin` FROM db_caps.users
-    WHERE users.id_user = :i and users.actif = 1";
+	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
+	`utilisateur`.`email`,  `utilisateur`.`statut` FROM utilisateur
+    WHERE utilisateur.idUtilisateur = :i";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statement->execute(array(':i' => $idUser));
+		$statement->execute(array(':i' => $idUtilisateur));
 	} catch (PDOException $e) {
 		return false;
 	}
 	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
 		$c = new EUtilisateur(
-			intval($row['id_user']),
-			$row['username'],
+			intval($row['idUtilisateur']),
+			$row['nom'],
+			$row['prenom'],
+			$row['pseudo'],
 			$row['email'],
-			$row['password'],
-			$row['actif'],
-			$row['admin']
+			$row['statut'],
+			$row['motDePasse']
+
 		);
 		array_push($arr, $c);
 	}
@@ -173,9 +167,9 @@ function getDataUserById($idUser)
  * @param string $email l'email de l'utilisateur
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function getUserIdByEmail($email)
+function RecupereUtilisateurParEmail($email)
 {
-	$sql = "SELECT id_user FROM db_caps.users  WHERE users.email = :e and users.actif = 1";
+	$sql = "SELECT idUtilisateur FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
 	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':e' => $email));
@@ -183,22 +177,22 @@ function getUserIdByEmail($email)
 		return false;
 	}
 	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
-	return $row['id_user'];
+	return $row['idUtilisateur'];
 }
 
 /**
  * Vérifie si l'utilisateur existe dans la base de donnée
  *
- * @param string $emailUser l'email de l'utilisateur
- * @param string $passwordUser le mot de passe de l'utilisateur
+ * @param string $emailUtilisateur l'email de l'utilisateur
+ * @param string $motDePasseUtilisateur le mot de passe de l'utilisateur
  * @return bool true si l'utilisateur est bel et bien présent dans la base de donnée, sinon false
  */
-function CheckUserExistInDB($emailUser, $passwordUser)
+function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 {
-	$recordsUser = getAllUser();
-	foreach ($recordsUser as $user) {
-		if ($emailUser == $user->email) {
-			if (password_verify($passwordUser, $user->password)) {
+	$registreUtilisateur = RecupereToutLesUtilisateurs();
+	foreach ($registreUtilisateur as $utilisateur) {
+		if ($emailUtilisateur == $utilisateur->email) {
+			if (password_verify($motDePasseUtilisateur, $utilisateur->motDePasse)) {
 				return true;
 			}
 		}

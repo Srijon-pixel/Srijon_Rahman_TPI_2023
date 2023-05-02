@@ -8,38 +8,54 @@ class EUtilisateur
 
     /**
      * Constructeur permettant de créer un nouveau compte utilisateur
-     * @param integer $InIdUser L'identifiant de l'utilisateur
-     * @param string $InUsername le nom de l'utilisateur
+     * @param integer $InIdUtilisateur L'identifiant de l'utilisateur
+     * @param string $InPseudo le pseodonyme de l'utilisateur
+     * @param string $InNom le nom de l'utilisateur
+     * @param string $InPrenom le prénom de l'utilisateur
      * @param string $InEmail l'email de l'utilisateur
-     * @param string $InPassword le mot de passe de l'utilisateur
-     * @param bool $InActif Indique si le compte existe ou non
-     * @param integer $InAdmin l'identifiant de l'administrateur
+     * @param bool $InStatut le statut que porte l'utilisateur
+     * @param string $InMotDePasse le mot de passe de l'utilisateur
      */
-    public function __construct($InIdUtilisateur, $InNom, $InPrenom, $InPseudo, $InEmail, $InMotDePasse)
+    public function __construct($InIdUtilisateur, $InNom, $InPrenom, $InPseudo, $InEmail, $InStatut, $InMotDePasse)
     {
 
         $this->idUtilisateur = $InIdUtilisateur;
+        $this->nom = $InNom;
+        $this->prenom = $InPrenom;
         $this->pseudo = $InPseudo;
         $this->email = $InEmail;
-        $this->password = $InMotDePasse;
+        $this->statut = $InStatut;
+        $this->motDePasse = $InMotDePasse;
     }
 
 
 
     /**
-     * @var integer L'identifiant du budget
+     * @var integer L'identifiant de l'utilisateur
      */
     public $idUtilisateur;
     /**
-     * @var string nom de l'utilisateur
+     * @var string le nom de l'utilisateur
+     */
+    public $nom;
+    /**
+     * @var string le prénom de l'utilisateur
+     */
+    public $prenom;
+    /**
+     * @var string le pseudo de l'utilisateur
      */
     public $pseudo;
     /**
-     * @var string email de l'utilisateur
+     * @var string l'email de l'utilisateur
      */
     public $email;
     /**
-     * @var string mot de passe de l'utilisateur
+     * @var bool le statut de l'utilisateur
      */
-    public $password;
-?>
+    public $statut;
+    /**
+     * @var string le mot de passe de l'utilisateur
+     */
+    public $motDePasse;
+}

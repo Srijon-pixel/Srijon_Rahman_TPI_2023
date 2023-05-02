@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/base.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <title>Canvas</title>
+    <title>Canevas</title>
 </head>
 
 <body>
@@ -24,17 +24,17 @@
     require_once './fonctions/fonction_session.php';
 
 
-    $user = GetUserFromSession();
-    $userName = 'invité';
-    $btnDirection = '/identification.php';
-    $btnText = 'Connexion';
-    $btnParametre = '';
+    $utilisateur = GetUserFromSession();
+    $nomUtilisateur = 'invité';
+    $boutonDirection = '/identification.php';
+    $boutonTexte = 'Connexion';
+    $boutonParametre = '';
 
-    if ($user != false) {
-        $userName = $user->pseudo;
-        $btnDirection = '/logout.php';
-        $btnText = 'Déconnexion';
-        $btnParametre = '<button class="btn"><a href="./account.php?id=' . $user->idUtilisateur . '">Compte</a></button>';
+    if ($utilisateur != false) {
+        $nomUtilisateur = $utilisateur->pseudo;
+        $boutonDirection = '/logout.php';
+        $boutonTexte = 'Déconnexion';
+        $boutonParametre = '<button class="btn"><a href="./account.php?id=' . $utilisateur->idUtilisateur . '">Compte</a></button>';
     }
     ?>
 
@@ -46,16 +46,16 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editGame.php">Éditer un jeu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu</a></li>
                     <li class="nav-item"><a class="nav-link" href="./identification.php"> Identification </a></li>
                     <li class="nav-item"><a class="nav-link" href="./inscription.php"> Inscription </a></li>
                     <li class="nav-item"><a class="nav-link" href="./profil.php">Profile</a></li>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">
-                        <h5 class="card-title"><?= $userName ?></h5>
-                        <?= $btnParametre ?>
-                        <a href="<?= $btnDirection ?>" class="btn btn-primary"><?= $btnText ?></a>
+                        <h5 class="card-title"><?= $nomUtilisateur ?></h5>
+                        <?= $boutonParametre ?>
+                        <a href="<?= $boutonDirection ?>" class="btn btn-primary"><?= $boutonTexte ?></a>
                     </div>
                 </div>
             </div>

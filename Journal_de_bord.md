@@ -79,3 +79,9 @@ C'est ma pause, je reprendrai le travail plus tard.
 
 ### 10:05
 Fin de la pause, je reprend le travail.
+
+### 10:31
+J'ai fini le CRUD pour la partie de l'utilisateur maintenant je m'attaque à la vue de la page d'identification
+
+### 11:40
+C'est ma pause déjeuner, je reprendrai le code plus tard, j'ai bientôt fini la page d'identification, je pense le finir à temps avant de passer à la page d'inscription. J'ai aussi modifier quelques détaille du canevas pour l'énoncé. 

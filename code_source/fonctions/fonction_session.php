@@ -20,7 +20,7 @@ function GetUserFromSession()
         return false;
     }
     if (isset($_SESSION[SESSION_KEY_ID_USER])) {
-        return getDataUserById(intval($_SESSION[SESSION_KEY_ID_USER]));
+        return RecuperationDonneeUtilisateur(intval($_SESSION[SESSION_KEY_ID_USER]));
     }
     return false;
 }
