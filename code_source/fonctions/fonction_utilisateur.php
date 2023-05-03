@@ -202,7 +202,7 @@ function RecupereUtilisateurParEmail($email)
  * Récupère l'identifiant de l'utilisateur à partir de son email
  *
  * @param string $email l'email de l'utilisateur
- * @return bool true si la requête a été correctement effectué, sinon false 
+ * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function VerifieEmailSimilaire($email)
 {
@@ -221,7 +221,7 @@ function VerifieEmailSimilaire($email)
  * Récupère l'identifiant de l'utilisateur à partir de son email
  *
  * @param string $email l'email de l'utilisateur
- * @return bool true si la requête a été correctement effectué, sinon false 
+ * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function VerifiePseudoSimilaire($pseudo)
 {

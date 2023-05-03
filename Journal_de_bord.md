@@ -92,6 +92,9 @@ C'est la fin de ma pause déjeuner, je reprend le code.
 ### 12h59
 J'ai fini la page pour l'identification, maintenant je fais la page d'inscription. 
 
+### 13:10
+Visite de l'expert monsieur Yvan Poulin. L'expert m'a expliqué comment je devais écrire mon journal de bord à présent en ne donnant que des informations important (exemple: modification d'un morceau de code et expliquer pourquoi).
+
 ### 15:58
 J'ai décidé de mettre un lien pour la page profil près du bouton de connexion/deconnexion pour permettre à l'utilisateur standard de visiter son profil
 
@@ -109,5 +112,25 @@ J'ai réussi à rattraper mon retard et ai pu finir mes tâches d'aujourd'hui. J
 J'ai rajouté au canevas un moyen pour l'utilisateur de se connecter ou se déconnecter si ce dernier et connecté ou non.
 
 ## 08:06
-Je suis revenu à la page profil pour ajouter une condition disant que si l'utilisateur est anonyme, alors il ne pourra pas acceder à la page profil tant qu'il restera anonyme.
+Je suis revenu à la page profil pour ajouter une condition disant que si l'utilisateur est anonyme, ainsi il ne pourra pas acceder à la page profil tant qu'il restera anonyme.
 
+## 10:30
+Visite du maître d'apprentissage. Nous avons parler de l'avancement de mon TPI et aussi de mon journal de bord . Il m'a conseillé d'écrire à partir de maintenant, à chaque fois que la journée commence, je devais écrire les objectif pour aujourd'hui dans le journal de bord.
+
+## 13:39
+Le maître d'apprentissage m'a expliqué que pour les commits que je faisais sur Github je devais donnais un commentaire et à la fin je devais regrouper tout les commits et les mettres dans la documentation technique en annexes. Il m'a aussi expliqué ou est ce que je pourrai trouvai les genres pour les jeu.
+
+## 14:50
+J'ai proposé au maître une idée de comment faire la relation entre utilisateur-administrateur pour la page d'édition de jeu vidéo. J'ai proposé l'idée que l'utilisateur remplit les champs pour ajouter le jeu puis clique sur le bouton proposer, ensuite l'administrateur arrive sur la page et peut ajouter le jeu proposer ou modifier les données avant de l'ajouter.
+
+## 15:20
+Je me suis rappeler comment on écriver une injection XSS. Exemple(<!--<script>alert("wowow")</script>-->). Je l'essaierai pour tester la sécurité des formulaires un autre jour. Et pour contrer cette attaque, je pense chercher une fonction enlevant les balise html en php.
+
+## 15:50
+J'ai discuté avec le maître au sujet des PEGI pour la table jeuvideo et lui ai proposé de faire une table pegi avec comme donnée les différentes tranches d'âge et les différentes contenus sensible.
+
+## 16:10
+J'ai discuté avec le maître à propos du plan de test si je devais le faire maintenant ou non et j'en ai conclu de commencé les testes à partir de maintenant.
+
+## Bilan de la journée
+Aujourd'hui j'ai fini la page de modification du profil, de modification du mot de passe, ai presque fini l'analyse fonctionnelle (il me manque juste la dernière maquette sur l'édition de jeu) et ai presque fini de tester de et de déboger la partie utilisateur(manque les injections). Je n'ai pas commencé le CRUD sur les jeux vidéo. Et n'ai pas fini le plan de test. Tout ce qui manque aujourd'hui je l'ai finirai demain si je peux.
