@@ -93,7 +93,21 @@ C'est la fin de ma pause déjeuner, je reprend le code.
 J'ai fini la page pour l'identification, maintenant je fais la page d'inscription. 
 
 ### 15:58
-J'ai décidé de mettre un lien pour la page profil près du bouton de connexion/deconnexion pour permettre àl'utilisateur standard de visiter son profil
+J'ai décidé de mettre un lien pour la page profil près du bouton de connexion/deconnexion pour permettre à l'utilisateur standard de visiter son profil
 
 ## Bilan de la journée
 J'ai réussi à rattraper mon retard et ai pu finir mes tâches d'aujourd'hui. Je pense vraiment qu'avec ce rythme je pourrai finir plutôt que prévu.
+
+### 03.05.2023
+### Objectif :
+    - Finir la page de modification du profil
+    - Faire la page de modification du mot de passe
+    - Finir l'analyse organique de la documentation technique
+    - Faire le CRUD pour la partie table jeuvideo avec ses genres et sa platforme
+
+## 07:58
+J'ai rajouté au canevas un moyen pour l'utilisateur de se connecter ou se déconnecter si ce dernier et connecté ou non.
+
+## 08:06
+Je suis revenu à la page profil pour ajouter une condition disant que si l'utilisateur est anonyme, alors il ne pourra pas acceder à la page profil tant qu'il restera anonyme.
+

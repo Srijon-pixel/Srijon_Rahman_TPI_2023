@@ -2,9 +2,9 @@
 <html lang="en">
 <!--
     Auteur: Mofassel Haque Srijon Rahman
-    Date: 02.05.2023
+    Date: 27.04.2023
     Projet: TPI video game club
-    Détail: Page permettant à l'utilisateur de créer son compte enceint du site 
+    Détail: Modèle de vue pour les autres pages du site
 -->
 
 <head>
@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/base.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <title>Inscription</title>
+    <title>Modifier le mot de passe</title>
 </head>
 
 <body>
@@ -23,18 +23,15 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
 
+    if (!DebutSession()) {
+        // Pas de session, donc redirection à l'acceuil
+        header('Location: /index.php');
+        exit;
+    }
+
     const ERREUR = "red";
 
-    $nom = "";
-    $prenom = "";
-    $pseudo = "";
-    $email = "";
     $motDePasse = "";
-
-    $erreurNom = "";
-    $erreurPrenom = "";
-    $erreurPseudo = "";
-    $erreurEmail = "";
     $erreurMotDePasse = "";
 
     $utilisateur = RecupereUtilisateurParSession();
@@ -43,12 +40,16 @@
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nameConnexionDeconnexion = "connexion";
-    
+
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nameConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+    } else {
+        // Pas connecté, donc redirection à la page de connection
+        header('Location: identification.php');
+        exit;
     }
 
     if (isset($_POST[$nameConnexionDeconnexion])) {
@@ -62,42 +63,29 @@
     }
 
 
-
-    if (isset($_POST['inscription'])) {
-
-        $nom = filter_input(INPUT_POST, 'nom');
-        if ($nom == false || $nom == "") {
-            $erreurNom = ERREUR;
-        }
-
-        $prenom = filter_input(INPUT_POST, 'prenom');
-        if ($prenom == false || $prenom == "") {
-            $erreurPrenom = ERREUR;
-        }
-
-        $pseudo = filter_input(INPUT_POST, 'pseudo');
-        if ($pseudo == false || $pseudo == "" || VerifiePseudoSimilaire($pseudo) == $pseudo) {
-            $erreurPseudo = ERREUR;
-        }
-
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-        if ($email == false || $email == "" || VerifieEmailSimilaire($email) == $email) {
-            $erreurEmail = ERREUR;
-        }
+    if (isset($_POST['modifierMotDePasse'])) {
+        $idModify = $utilisateur[0]->idUtilisateur;
+        $idModify = intval($idModify);
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
-        if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
+        if ($nom == false || $nom == "") {
             $erreurMotDePasse = ERREUR;
         }
 
-        if ($erreurNom != ERREUR && $erreurPrenom != ERREUR && $erreurPseudo != ERREUR && $erreurEmail != ERREUR && $erreurMotDePasse != ERREUR) {
-            if (AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)) {
-                header('Location: identification.php');
+        if ($idModify > 0 &&  $erreurEmail != ERREUR) {
+            if (modifierMotDePasse($idModify, $motDePasse)) {
+                header('Location: profil.php');
                 exit;
             }
         } else {
             echo '<script>alert("Pas possible il vous manque des valeurs ou des valeurs existent déjà chez d\'autre compte")</script>';
         }
+    }
+
+    $enregistrements = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
+    if ($enregistrements === false) {
+        echo "Les données de l'utilisateur ne peuvent être affichées. Une erreur s'est produite.";
+        exit;
     }
     ?>
 
@@ -125,24 +113,13 @@
 
     </header>
     <main>
-
         <form action="" method="POST">
-            <label for="nom" style="color:<?php echo $erreurNom; ?>">Votre nom :</label><br>
-            <input type="text" name="nom" value="<?php echo $nom; ?>"> <br>
+            <?php foreach ($enregistrements as $utilisateur) {
 
-            <label for="prenom" style="color:<?php echo $erreurPrenom; ?>">Votre prénom :</label><br>
-            <input type="text" name="prenom" value="<?php echo $prenom; ?>"> <br>
-
-            <label for="pseudo" style="color:<?php echo $erreurPseudo; ?>">Votre pseudo :</label><br>
-            <input type="text" name="pseudo" value="<?php echo $pseudo; ?>"> <br>
-
-            <label for="email" style="color:<?php echo $erreurEmail; ?>">Votre email:</label><br>
-            <input type="email" name="email" value="<?php echo $email; ?>"><br>
-
-            <label for="motDePasse" style="color:<?php echo $erreurMotDePasse; ?>">Votre mot de passe : </label><br>
-            <input type="password" name="motDePasse" value="<?php echo $motDePasse; ?>" placeholder="Minimum une majuscule, une minuscule, un chiffre et 8 caractères" style="width:19%"><br>
-
-            <input type="submit" name="inscription" value="S'inscrire" class="btn btn-primary">
+                echo "<label for=\"motDePasse\" style=\"" . $erreurMotDePasse . "\">Votre mot de passe :</label><br>";
+                echo "<input type=\"password\" name=\"motDePasse\" value=\"" . $utilisateur->motDePasse . "\"  placeholder=\"Minimum une majuscule, une minuscule, un chiffre et 8 caractères\" style=\"width:19%\"><br>";
+            } ?>
+            <input type="submit" name="modifierMotDePasse" class="btn btn-primary" value="Modifier le compte">
         </form>
 
     </main>

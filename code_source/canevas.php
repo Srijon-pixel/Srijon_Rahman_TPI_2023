@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-    Auteur: Srijon Rahman
+    Auteur: Mofassel Haque Srijon Rahman
     Date: 27.04.2023
     Projet: TPI video game club
     Détail: Modèle de vue pour les autres pages du site
@@ -29,12 +29,23 @@
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
-
+    $nameConnexionDeconnexion = "connexion";
+    
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
-        $boutonDirection = '/logout.php';
+        $nameConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+    }
+
+    if (isset($_POST[$nameConnexionDeconnexion])) {
+        if ($nameConnexionDeconnexion == "connexion") {
+            header("location: identification.php");
+            exit;
+        } else {
+            session_destroy();
+            header("location: index.php");
+        }
     }
     ?>
 
@@ -52,7 +63,9 @@
                     <div class="card-body">
                         <h5 class="card-title"><?= $nomUtilisateur ?></h5>
                         <?= $boutonParametre ?>
-                        <a href="<?= $boutonDirection ?>" class="btn btn-primary"><?= $boutonTexte ?></a>
+                        <form action="" method="POST">
+                            <input type="submit" name="<?= $nameConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
+                        </form>
                     </div>
                 </div>
             </div>

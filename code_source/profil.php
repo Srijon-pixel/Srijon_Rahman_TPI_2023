@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <!--
-    Auteur: Srijon Rahman
-    Date: 27.04.2023
+    Auteur: Mofassel Haque Srijon Rahman
+    Date: 02.05.2023
     Projet: TPI video game club
-    Détail: Modèle de vue pour les autres pages du site
+    Détail: Page affichant les données sur l'utilisateur
 -->
 
 <head>
@@ -23,22 +23,33 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
 
-    if (!DebutSession()) {
-        // Pas de session, donc redirection à l'acceuil
-        header('Location: /index.php');
-        exit;
-    }
+    
     $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
+    $nameConnexionDeconnexion = "connexion";
 
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
-        $boutonDirection = '/logout.php';
+        $nameConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+    } else {
+        // Pas connecté, donc redirection à la page de connection
+        header('Location: identification.php');
+        exit;
+    }
+
+    if (isset($_POST[$nameConnexionDeconnexion])) {
+        if ($nameConnexionDeconnexion == "connexion") {
+            header("location: identification.php");
+            exit;
+        } else {
+            session_destroy();
+            header("location: index.php");
+        }
     }
 
     $enregistrements = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
@@ -46,6 +57,7 @@
         echo "Les données de l'utilisateur ne peuvent être affichées. Une erreur s'est produite.";
         exit;
     }
+
     ?>
 
     <header>
@@ -62,7 +74,9 @@
                     <div class="card-body">
                         <h5 class="card-title"><?= $nomUtilisateur ?></h5>
                         <?= $boutonParametre ?>
-                        <a href="<?= $boutonDirection ?>" class="btn btn-primary"><?= $boutonTexte ?></a>
+                        <form action="" method="POST">
+                            <input type="submit" name="<?= $nameConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -73,22 +87,24 @@
         <form action="#" method="POST">
             <?php foreach ($enregistrements as $utilisateur) {
 
-                echo "<label for=\"nom\">Votre nom d'utilisateur :</label><br>";
-                echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\"><br>";
-                echo "<label for=\"prenom\">Votre prénom d'utilisateur :</label><br>";
-                echo "<input type=\"text\" name=\"prenom\" value=\"" . $utilisateur->prenom . "\"><br>";
-                echo "<label for=\"pseudo\">Votre pseudo :</label><br>";
-                echo "<input type=\"text\" name=\"pseudo\" value=\"" . $utilisateur->pseudo . "\"><br>";
-                echo "<label for=\"email\">Votre email : </label><br>";
-                echo "<input type=\"email\" name=\"email\" value=\"" . $utilisateur->email . "\"><br>";
-                echo "<label for=\"statut\" >Votre statut : </label><br>";
-                if($utilisateur->statut == 0){
-                    echo "<input type=\"text\" name=\"statut\" value=\"simple utilisateur\"><br>";
-                }else{
-                    echo "<input type=\"text\" name=\"statut\" value=\"administrateur\"><br>";
+                echo "<label for=\"nom\">Votre nom :</label><br>";
+                echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\" readonly><br>";
 
-                }
-                ;
+                echo "<label for=\"prenom\">Votre prénom :</label><br>";
+                echo "<input type=\"text\" name=\"prenom\" value=\"" . $utilisateur->prenom . "\" readonly><br>";
+
+                echo "<label for=\"pseudo\">Votre pseudo :</label><br>";
+                echo "<input type=\"text\" name=\"pseudo\" value=\"" . $utilisateur->pseudo . "\" readonly><br>";
+
+                echo "<label for=\"email\">Votre email : </label><br>";
+                echo "<input type=\"email\" name=\"email\" value=\"" . $utilisateur->email . "\" readonly><br>";
+
+                echo "<label for=\"statut\" >Votre statut : </label><br>";
+                if ($utilisateur->statut == 0) {
+                    echo "<input type=\"text\" name=\"statut\" value=\"simple utilisateur\" readonly><br>";
+                } else {
+                    echo "<input type=\"text\" name=\"statut\" value=\"administrateur\" readonly><br>";
+                };
             } ?>
             <a href="./modifierMotDePasse.php" class="btn btn-primary">Modifier le mot de passe</a>
             <a href="./modifierCompte.php" class="btn btn-primary">Modifier le compte</a>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Auteur: Srijon Rahman
+ * Auteur: Mofassel Haque Srijon Rahman
  * Date: 27.04.2023
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
@@ -108,6 +108,24 @@ function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 }
 
 /**
+ * Modifie le mot de passe de l'utilisateur dans la base de donnée
+ *
+ * @return bool true si la requête a été correctement effectué, sinon false 
+ */
+function modifierMotDePasse($idUtilisateur, $motDePasse)
+{
+	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`motDePasse` = :m WHERE `utilisateur`.`idUtilisateur` = :i";
+	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(":i" => $idUtilisateur, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
+	} catch (PDOException $e) {
+		return false;
+	}
+	// Done
+	return true;
+}
+
+/**
  * Vérifie si le mot de passe répond aux critères pour la syntax
  *
  * @param string $motDePasse le mot de passe de l'utilisateur
@@ -178,6 +196,44 @@ function RecupereUtilisateurParEmail($email)
 	}
 	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
 	return $row['idUtilisateur'];
+}
+
+/**
+ * Récupère l'identifiant de l'utilisateur à partir de son email
+ *
+ * @param string $email l'email de l'utilisateur
+ * @return bool true si la requête a été correctement effectué, sinon false 
+ */
+function VerifieEmailSimilaire($email)
+{
+	$sql = "SELECT email FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
+	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(':e' => $email));
+	} catch (PDOException $e) {
+		return false;
+	}
+	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+	return $row['email'];
+}
+
+/**
+ * Récupère l'identifiant de l'utilisateur à partir de son email
+ *
+ * @param string $email l'email de l'utilisateur
+ * @return bool true si la requête a été correctement effectué, sinon false 
+ */
+function VerifiePseudoSimilaire($pseudo)
+{
+	$sql = "SELECT pseudo FROM video_game_club.utilisateur  WHERE utilisateur.pseudo = :ps";
+	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(':ps' => $pseudo));
+	} catch (PDOException $e) {
+		return false;
+	}
+	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
+	return $row['pseudo'];
 }
 
 /**

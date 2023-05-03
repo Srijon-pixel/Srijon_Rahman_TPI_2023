@@ -9,7 +9,7 @@
 require_once './fonctions/fonction_utilisateur.php';
 
 /**
- * @var string les clés utilisé pour identifier l'utilisateur par sa session
+ * @var string la clé utilisé pour identifier l'utilisateur par sa session
  */
 define('SESSION_KEY_ID_USER', 'idUtilisateur');
 
