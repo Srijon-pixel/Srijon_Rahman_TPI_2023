@@ -5,7 +5,7 @@
  */
 require_once './config/conparam.php';
 
-class EDatabase
+class EBaseDonnee
 {
 
 	private static $objInstance;

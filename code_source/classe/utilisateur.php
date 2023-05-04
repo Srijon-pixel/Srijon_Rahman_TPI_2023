@@ -9,7 +9,7 @@ class EUtilisateur
     /**
      * Constructeur permettant de créer un nouveau compte utilisateur
      * @param integer $InIdUtilisateur L'identifiant de l'utilisateur
-     * @param string $InPseudo le pseodonyme de l'utilisateur
+     * @param string $InPseudo le pseudonyme de l'utilisateur
      * @param string $InNom le nom de l'utilisateur
      * @param string $InPrenom le prénom de l'utilisateur
      * @param string $InEmail l'email de l'utilisateur

@@ -39,11 +39,11 @@
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
-    $nameConnexionDeconnexion = "connexion";
+    $nomConnexionDeconnexion = "connexion";
 
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
-        $nameConnexionDeconnexion = "deconnexion";
+        $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     } else {
@@ -52,8 +52,8 @@
         exit;
     }
 
-    if (isset($_POST[$nameConnexionDeconnexion])) {
-        if ($nameConnexionDeconnexion == "connexion") {
+    if (isset($_POST[$nomConnexionDeconnexion])) {
+        if ($nomConnexionDeconnexion == "connexion") {
             header("location: identification.php");
             exit;
         } else {
@@ -64,16 +64,16 @@
 
 
     if (isset($_POST['modifierMotDePasse'])) {
-        $idModify = $utilisateur[0]->idUtilisateur;
-        $idModify = intval($idModify);
+        $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
-        if ($nom == false || $nom == "") {
+        $motDePasse = antiInjectionXSS($motDePasse);
+        if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
             $erreurMotDePasse = ERREUR;
         }
 
-        if ($idModify > 0 &&  $erreurEmail != ERREUR) {
-            if (modifierMotDePasse($idModify, $motDePasse)) {
+        if ($idUtilisateur > 0 &&  $erreurEmail != ERREUR) {
+            if (modifierMotDePasse($idUtilisateur, $motDePasse)) {
                 header('Location: profil.php');
                 exit;
             }
@@ -104,7 +104,7 @@
                         <h5 class="card-title"><?= $nomUtilisateur ?></h5>
                         <?= $boutonParametre ?>
                         <form action="" method="POST">
-                            <input type="submit" name="<?= $nameConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
+                            <input type="submit" name="<?= $nomConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
                         </form>
                     </div>
                 </div>

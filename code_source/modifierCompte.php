@@ -47,11 +47,11 @@
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
-    $nameConnexionDeconnexion = "connexion";
+    $nomConnexionDeconnexion = "connexion";
 
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
-        $nameConnexionDeconnexion = "deconnexion";
+        $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     } else {
@@ -60,8 +60,8 @@
         exit;
     }
 
-    if (isset($_POST[$nameConnexionDeconnexion])) {
-        if ($nameConnexionDeconnexion == "connexion") {
+    if (isset($_POST[$nomConnexionDeconnexion])) {
+        if ($nomConnexionDeconnexion == "connexion") {
             header("location: identification.php");
             exit;
         } else {
@@ -71,31 +71,42 @@
     }
 
     if (isset($_POST['modifierCompte'])) {
-        $idModify = $utilisateur[0]->idUtilisateur;
-        $idModify = intval($idModify);
-
+        $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
+        modifierEmailPseudo($idUtilisateur);
         $nom = filter_input(INPUT_POST, 'nom');
+        $nom = antiInjectionXSS($nom);
         if ($nom == false || $nom == "") {
             $erreurNom = ERREUR;
         }
 
         $prenom = filter_input(INPUT_POST, 'prenom');
+        $prenom = antiInjectionXSS($prenom);
         if ($prenom == false || $prenom == "") {
             $erreurPrenom = ERREUR;
         }
 
+
         $pseudo = filter_input(INPUT_POST, 'pseudo');
-        if ($pseudo == false || $pseudo == "" || VerifiePseudoSimilaire($pseudo) == $pseudo) {
+        $pseudo = antiInjectionXSS($pseudo);
+        if ($pseudo == false || $pseudo == "") {
+            $erreurPseudo = ERREUR;
+        } elseif (VerifiePseudoSimilaire($pseudo) == $pseudo) {
+            echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
             $erreurPseudo = ERREUR;
         }
 
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-        if ($email == false || $email == "" || VerifieEmailSimilaire($email) == $email) {
+        $email = strip_tags($email);
+        $email = addslashes($email);
+        if ($email == false || $email == "") {
+            $erreurEmail = ERREUR;
+        } elseif (VerifieEmailSimilaire($email) == $email) {
+            echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
             $erreurEmail = ERREUR;
         }
 
-        if ($idModify > 0 && $erreurNom != ERREUR && $erreurPrenom != ERREUR && $erreurPseudo != ERREUR && $erreurEmail != ERREUR) {
-            if (modifierUtilisateur($idModify, $nom, $prenom, $pseudo, $email)) {
+        if ($idUtilisateur > 0 && $erreurNom != ERREUR && $erreurPrenom != ERREUR && $erreurPseudo != ERREUR && $erreurEmail != ERREUR) {
+            if (modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)) {
                 header('Location: profil.php');
                 exit;
             }
@@ -126,7 +137,7 @@
                         <h5 class="card-title"><?= $nomUtilisateur ?></h5>
                         <?= $boutonParametre ?>
                         <form action="" method="POST">
-                            <input type="submit" name="<?= $nameConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
+                            <input type="submit" name="<?= $nomConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
                         </form>
                     </div>
                 </div>

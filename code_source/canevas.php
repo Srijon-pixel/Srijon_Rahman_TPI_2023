@@ -29,17 +29,17 @@
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
-    $nameConnexionDeconnexion = "connexion";
+    $nomConnexionDeconnexion = "connexion";
     
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
-        $nameConnexionDeconnexion = "deconnexion";
+        $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     }
 
-    if (isset($_POST[$nameConnexionDeconnexion])) {
-        if ($nameConnexionDeconnexion == "connexion") {
+    if (isset($_POST[$nomConnexionDeconnexion])) {
+        if ($nomConnexionDeconnexion == "connexion") {
             header("location: identification.php");
             exit;
         } else {
@@ -64,7 +64,7 @@
                         <h5 class="card-title"><?= $nomUtilisateur ?></h5>
                         <?= $boutonParametre ?>
                         <form action="" method="POST">
-                            <input type="submit" name="<?= $nameConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
+                            <input type="submit" name="<?= $nomConnexionDeconnexion ?>" class="btn btn-primary" value="<?= $boutonTexte ?>">
                         </form>
                     </div>
                 </div>

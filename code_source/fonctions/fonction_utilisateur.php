@@ -23,7 +23,7 @@ function RecupereToutLesUtilisateurs()
 
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
 	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute();
 	} catch (PDOException $e) {
@@ -61,7 +61,7 @@ function RecupereToutLesUtilisateurs()
 function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 {
 	$sql = "INSERT INTO `video_game_club`.`utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,0,:m)";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
 	} catch (PDOException $e) {
@@ -78,7 +78,7 @@ function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 function SupprimerUtilisateur($idUtilisateur)
 {
 	$sql = "DELETE FROM `video_game_club`.`utilisateur` WHERE `utilisateur`.`idUtilisateur` = :i";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":i" => $idUtilisateur));
 	} catch (PDOException $e) {
@@ -97,7 +97,7 @@ function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 {
 	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`nom` = :n, `utilisateur`.`prenom` = :pr, 
 	`utilisateur`.`pseudo` = :ps, `utilisateur`.`email` = :e WHERE `utilisateur`.`idUtilisateur` = :i";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":i" => $idUtilisateur, ":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email));
 	} catch (PDOException $e) {
@@ -115,7 +115,7 @@ function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 function modifierMotDePasse($idUtilisateur, $motDePasse)
 {
 	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`motDePasse` = :m WHERE `utilisateur`.`idUtilisateur` = :i";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":i" => $idUtilisateur, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
 	} catch (PDOException $e) {
@@ -125,6 +125,24 @@ function modifierMotDePasse($idUtilisateur, $motDePasse)
 	return true;
 }
 
+/**
+ * Modifie le mot de passe de l'utilisateur dans la base de donnée
+ *
+ * @return bool true si la requête a été correctement effectué, sinon false 
+ */
+function modifierEmailPseudo($idUtilisateur)
+{
+	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`pseudo` = \"\", `utilisateur`.`email` = \"\"
+	 WHERE `utilisateur`.`idUtilisateur` = :i";
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(":i" => $idUtilisateur));
+	} catch (PDOException $e) {
+		return false;
+	}
+	// Done
+	return true;
+}
 /**
  * Vérifie si le mot de passe répond aux critères pour la syntax
  *
@@ -156,9 +174,38 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
 	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur
     WHERE utilisateur.idUtilisateur = :i";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':i' => $idUtilisateur));
+	} catch (PDOException $e) {
+		return false;
+	}
+	// On parcoure les enregistrements 
+	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		$c = new EUtilisateur(
+			intval($row['idUtilisateur']),
+			$row['nom'],
+			$row['prenom'],
+			$row['pseudo'],
+			$row['email'],
+			$row['statut'],
+			$row['motDePasse']
+
+		);
+		array_push($arr, $c);
+	}
+	return $arr;
+}
+
+function RecuperationDonneeUtilisateurParEmail($email)
+{
+	$arr = array();
+	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
+	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur
+    WHERE utilisateur.email = :e";
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(':e' => $email));
 	} catch (PDOException $e) {
 		return false;
 	}
@@ -183,12 +230,12 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
  * Récupère l'identifiant de l'utilisateur à partir de son email
  *
  * @param string $email l'email de l'utilisateur
- * @return bool true si la requête a été correctement effectué, sinon false 
+ * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function RecupereUtilisateurParEmail($email)
 {
 	$sql = "SELECT idUtilisateur FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':e' => $email));
 	} catch (PDOException $e) {
@@ -198,42 +245,43 @@ function RecupereUtilisateurParEmail($email)
 	return $row['idUtilisateur'];
 }
 
-/**
- * Récupère l'identifiant de l'utilisateur à partir de son email
- *
- * @param string $email l'email de l'utilisateur
- * @return array|bool true si la requête a été correctement effectué, sinon false 
- */
+
 function VerifieEmailSimilaire($email)
 {
 	$sql = "SELECT email FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':e' => $email));
 	} catch (PDOException $e) {
 		return false;
 	}
-	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
-	return $row['email'];
+	if ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		return $row['email'];
+	} else {
+		return false;
+	}
 }
 
 /**
- * Récupère l'identifiant de l'utilisateur à partir de son email
+ * 
  *
- * @param string $email l'email de l'utilisateur
+ * @param string $pseudo
  * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function VerifiePseudoSimilaire($pseudo)
 {
 	$sql = "SELECT pseudo FROM video_game_club.utilisateur  WHERE utilisateur.pseudo = :ps";
-	$statement = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':ps' => $pseudo));
 	} catch (PDOException $e) {
 		return false;
 	}
-	$row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT);
-	return $row['pseudo'];
+	if ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		return $row['pseudo'];
+	} else {
+		return false;
+	}
 }
 
 /**
@@ -245,7 +293,7 @@ function VerifiePseudoSimilaire($pseudo)
  */
 function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 {
-	$registreUtilisateur = RecupereToutLesUtilisateurs();
+	$registreUtilisateur = RecuperationDonneeUtilisateurParEmail($emailUtilisateur);
 	foreach ($registreUtilisateur as $utilisateur) {
 		if ($emailUtilisateur == $utilisateur->email) {
 			if (password_verify($motDePasseUtilisateur, $utilisateur->motDePasse)) {
@@ -254,4 +302,17 @@ function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 		}
 	}
 	return false;
+}
+/**
+ *
+ *
+ * @param string $string chaîne de charactère récupèré
+ * @return string
+ */
+function antiInjectionXSS($string)
+{
+	$string = htmlspecialchars($string, ENT_QUOTES);
+	$string = strip_tags($string);
+	$string = addslashes($string);
+	return $string;
 }

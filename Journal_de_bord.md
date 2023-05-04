@@ -105,7 +105,7 @@ J'ai réussi à rattraper mon retard et ai pu finir mes tâches d'aujourd'hui. J
 ### Objectif :
     - Finir la page de modification du profil
     - Faire la page de modification du mot de passe
-    - Finir l'analyse organique de la documentation technique
+    - Finir l'analyse fonctionnelle de la documentation technique
     - Faire le CRUD pour la partie table jeuvideo avec ses genres et sa platforme
 
 ## 07:58
@@ -118,19 +118,65 @@ Je suis revenu à la page profil pour ajouter une condition disant que si l'util
 Visite du maître d'apprentissage. Nous avons parler de l'avancement de mon TPI et aussi de mon journal de bord . Il m'a conseillé d'écrire à partir de maintenant, à chaque fois que la journée commence, je devais écrire les objectif pour aujourd'hui dans le journal de bord.
 
 ## 13:39
-Le maître d'apprentissage m'a expliqué que pour les commits que je faisais sur Github je devais donnais un commentaire et à la fin je devais regrouper tout les commits et les mettres dans la documentation technique en annexes. Il m'a aussi expliqué ou est ce que je pourrai trouvai les genres pour les jeu.
+Le maître d'apprentissage m'a expliqué que pour les commits que je faisais sur Github je devais donnais un commentaire et à la fin je devais regrouper tout les commits et les mettres dans la documentation technique en annexes. Il m'a aussi expliqué où est ce que je pourrai trouvai les genres pour les jeu.
 
 ## 14:50
 J'ai proposé au maître une idée de comment faire la relation entre utilisateur-administrateur pour la page d'édition de jeu vidéo. J'ai proposé l'idée que l'utilisateur remplit les champs pour ajouter le jeu puis clique sur le bouton proposer, ensuite l'administrateur arrive sur la page et peut ajouter le jeu proposer ou modifier les données avant de l'ajouter.
 
 ## 15:20
-Je me suis rappeler comment on écriver une injection XSS. Exemple(<!--<script>alert("wowow")</script>-->). Je l'essaierai pour tester la sécurité des formulaires un autre jour. Et pour contrer cette attaque, je pense chercher une fonction enlevant les balise html en php.
+Je me suis rappeler comment on écriver une injection XSS. Exemple(<!--<script>alert("wowow")</script>-->). Je l'essaierai pour tester la sécurité des formulaires un autre jour. Et pour contrer cette attaque, je pense chercher une fonction enlevant les balises html en php.
 
 ## 15:50
-J'ai discuté avec le maître au sujet des PEGI pour la table jeuvideo et lui ai proposé de faire une table pegi avec comme donnée les différentes tranches d'âge et les différentes contenus sensible.
+J'ai discuté avec le maître au sujet des PEGI pour la table jeuvideo et lui ai proposé de faire une table pegi avec comme donnée les différentes tranches d'âge et les différentes contenus sensible. Il a accepté.
 
 ## 16:10
 J'ai discuté avec le maître à propos du plan de test si je devais le faire maintenant ou non et j'en ai conclu de commencé les testes à partir de maintenant.
 
 ## Bilan de la journée
 Aujourd'hui j'ai fini la page de modification du profil, de modification du mot de passe, ai presque fini l'analyse fonctionnelle (il me manque juste la dernière maquette sur l'édition de jeu) et ai presque fini de tester de et de déboger la partie utilisateur(manque les injections). Je n'ai pas commencé le CRUD sur les jeux vidéo. Et n'ai pas fini le plan de test. Tout ce qui manque aujourd'hui je l'ai finirai demain si je peux.
+
+### 04.05.2023
+    - Finir l'analyse fonctionnelle de la documentation technique
+    - Finir le plan de test sur la partie utilisateur
+    - Faire les fonctions contre les injections.
+    - L'insertion de la table jeuvideo dans la base de données
+    - Faire le CRUD pour la partie table jeuvideo avec ses genres sa platforme
+    - Faire les fonctions entre la table jeuvideo et la table pegi
+    - CRUD pour la table commentaire
+    - Fonction pour l'ajout + modification des notes
+    - Faire un début de la fonction pour l'affichage des notes du jeux avec ses commentaires et de quel utilisateur
+
+## 08:43
+Pour éviter les injections XSS, je suis aller chercher un moyen sur internet. J'ai appris sur le site "https://brightsec.com/blog/cross-site-scripting-php/" que le moyen le plus efficace pour les enlever serait d'utiliser les fonctions, htmlspecialchars(), strip_tags() et addslashes(). Le premier remplace les charactère spéciaux en entité HTML, le deuxième enlève les balises HTML et PHP d'une chaîne de charactère et le dernier ajoute des antislashs à la chaîne de charactère 
+
+## 10:10
+J'ai discuté avec le maître concernant la table plateforme car je n'avais pas compris si c'était libre de choix pour les plateforme ou s'il y avait une liste défini. Au final c'est libre de choix.
+
+## 11:14
+La fonction ajout de la table jeuvideo pourrai fonctionnais si j'utilise des transaction avec la table commentaire.
+
+## 11:20
+Je remarque je n'arrive plus à me connecté et je ne trouve pas l'erreur, à un moment le mot de passe et l'email devient vide alors que je les ajouter dans le formulaire.
+
+## 11:40
+Fausse alerte mon maître m'a montrer que l'erreur venait juste d'un égal en moins dans les ifs que j'avais enlever sans le vouloir.
+
+## 11:53 
+J'ai remarqué une erreur dans la modification du profil, Si l'utilisateur ne veut pas changer son email ou son pseudo alors il y aura un souci. À cause de mes fonctions VerifieSimilaireEmail() et VerifieSimilairePseudo() et bien ils comprendront que le pseudo et l'email n'ont pas changer et affichera du coup une erreur. Je pense trouver la solution, au moment où l'utilisateur clique sur le bouton pour modifier, on remplace dans le back-end l'email et le pseudo par du vide, ensuite on verifie s'il y des similarités chez d'autre utilisateur pour l'email et le pseudo et enfin on modifie l'email et le pseudo par ce que l'utilisateur a mis dans les champs.
+
+## 12:50
+Mon maître m'a fait la remarque que ma fonction VerifieUtilisateurExiste() était pas bien si la base de donnée possédait plus de 1000 utilisateur par exemple car ma fonction fait une recherche pour chaque utilisateur un par un ce qui peut être long avec 100 utilisateur, je vais mettre comme solution une fonction qui récupère toute les données de l'utilisateur à l'aide de son identifiant puis comparera l'email et le mot de passe avec la fonction VerifyUtilisateurExiste, comme l'email et le pseudo sont aussi unique alors ce sera plus rapide.
+
+## 13:00
+Visite de l'expert Borys Folomietow. Nous avons parler de ma journée, de ma progression, de mes problèmes et des solutions que je comptais essayais pour les résoudres.
+
+## 16:13
+J'ai consulté avec mon maître concernant la multiciplité entre la table commentaire et la table jeuVideo qui me laissais dubitatif, puis on a compris que la multaplicité est tout simplement inversé.
+
+## 16:18
+J'ai encore consulté avec mon maître mais pour savoir si mon énorme au niveau du planning prévisionnel était trop grave et il m'a conseillé de finir tout le code du site d'ici le 8ème jour.
+
+## Bilan de la journée
+
+Très grave, je n'ai fait que les 4 premières tâche que j'ai mis en objectif aujourd'hui, pour le reste je n'ai que fais la moitié chacun et pour la dernière je ne l'ai pas faite. Je dois absolument tout rattarper avant le 7 ème jour et finir le site le 8ème jour.
+
