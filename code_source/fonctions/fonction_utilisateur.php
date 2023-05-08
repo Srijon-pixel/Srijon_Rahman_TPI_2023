@@ -11,47 +11,6 @@ require_once './classe/utilisateur.php';
 
 
 
-/**
- * Récupère toutes les utilisateurs de la base de donnée
- *
- * @return array|bool Un tableau des EUtilisateur
- *                    False si une erreur
- */
-function RecupereToutLesUtilisateurs()
-{
-	$arr = array();
-
-	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
-	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur";
-	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	try {
-		$statement->execute();
-	} catch (PDOException $e) {
-		return false;
-	}
-	// On parcoure les enregistrements 
-	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-		// On crée l'objet EUtilisateur en l'initialisant avec les données provenant
-		// de la base de données
-		$c = new EUtilisateur(
-			intval($row['idUtilisateur']),
-			$row['nom'],
-			$row['prenom'],
-			$row['pseudo'],
-			$row['email'],
-			$row['statut'],
-			$row['motDePasse']
-
-		);
-		// On place l'objet EUtilisateur créé dans le tableau
-		array_push($arr, $c);
-	}
-
-	// Done
-	return $arr;
-}
-
-
 
 /**
  * Insère l'utilisateur dans la base de donnée

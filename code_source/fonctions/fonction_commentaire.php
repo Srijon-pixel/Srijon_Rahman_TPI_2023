@@ -7,7 +7,6 @@
  * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
  */
 require_once './bd/base_de_donnee.php';
-require_once './classe/jeu_video.php';
 require_once './classe/commentaire.php';
 
 
@@ -15,31 +14,34 @@ require_once './classe/commentaire.php';
 /**
  * Récupère touts les jeux vidéo de la base de donnée
  *
- * @return array|bool Un tableau des EJeuVideo
+ * @return array|bool Un tableau des ECommentaire
  *                    False si une erreur
  */
-function RecupereToutLesCommentaires()
+function RecupereCommentaireJeu($idJeuVideo)
 {
     $arr = array();
 
-    $sql = "SELECT `commentaire`.`idCommentaire`, `commentaire`.`titre`, `commentaire`.`dateSortie` FROM jeuVideo";
+    $sql = "SELECT `commentaire`.`idCommentaire`, `commentaire`.`commentaire`, `commentaire`.`dateCommentaire`,
+     `commentaire`.`idUtilisateur`, `commentaire`.`idJeuVideo`  FROM commentaire WHERE idJeuVideo = :ij";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
-        $statement->execute();
+        $statement->execute(array(':ij' => $idJeuVideo));
     } catch (PDOException $e) {
         return false;
     }
     // On parcoure les enregistrements 
     while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-        // On crée l'objet EJeuVideo en l'initialisant avec les données provenant
+        // On crée l'objet ECommentaire en l'initialisant avec les données provenant
         // de la base de données
         $c = new ECommentaire(
             intval($row['idCommentaire']),
             $row['commentaire'],
-            $row['dateCommentaire']
+            $row['dateCommentaire'],
+            $row['idUtilisateur'],
+            $row['idJeuVideo']
 
         );
-        // On place l'objet EJeuVideo créé dans le tableau
+        // On place l'objet ECommentaire créé dans le tableau
         array_push($arr, $c);
     }
 
@@ -50,21 +52,21 @@ function RecupereToutLesCommentaires()
 
 
 /**
- * Insère l'utilisateur dans la base de donnée
+ * Insère le commentaire d'un utilisateur dans la base de donnée
  *
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
 function AjouterCommentaire(
-    $titre,
-    $version,
-    $dateSortie,
+    $commentaire,
+    $dateCommentaire,
+    $idUtilisateur,
+    $idJeuvideo
 ) {
-    $sql = "INSERT INTO `video_game_club`.`jeuVideo` (`titre`, `version`,`dateSortie`,`datePublication`,
-	`imageEncode`,`description`,`proposition`,`titre`,`titre`,`titre`,) 
-	VALUES(:n,:pr,:ps,:e,0,:m)";
+    $sql = "INSERT INTO `video_game_club`.`jeuVideo` (`commentaire`, `dateCommentaire`,`idUtilisateur`,`idJeuvideo`) 
+	VALUES(:c,:dc,:iu,:ij)";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
-        $statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
+        $statement->execute(array(":c" => $commentaire, ":dc" => $dateCommentaire, ":iu" => $idUtilisateur, ":ij" => $idJeuvideo));
     } catch (PDOException $e) {
         return false;
     }
@@ -94,13 +96,13 @@ function SupprimerCommentaire($idCommentaire)
  *
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifierCommentaire(
+function ModifierCommentaire(
     $idCommentaire,
     $commentaire,
     $dateCommentaire
 ) {
     $sql = "UPDATE `video_game_club`.`commentaire`
-    SET `commentaire`.`commentaire` = :c, `jeuVideo`.`dateCommentaire` = :dc
+    SET `commentaire`.`commentaire` = :c, `commentaire`.`dateCommentaire` = :dc
 	WHERE `commentaire`.`idCommentaire` = :ic";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {

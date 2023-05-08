@@ -22,6 +22,7 @@
     //Permet d'utiliser les fonctions du fichier 
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
+    require_once './fonctions/fonction_jeuVideo.php';
 
 
     $utilisateur = RecupereUtilisateurParSession();

@@ -101,41 +101,42 @@ J'ai décidé de mettre un lien pour la page profil près du bouton de connexion
 ## Bilan de la journée
 J'ai réussi à rattraper mon retard et ai pu finir mes tâches d'aujourd'hui. Je pense vraiment qu'avec ce rythme je pourrai finir plutôt que prévu.
 
-### 03.05.2023
+## 03.05.2023
 ### Objectif :
     - Finir la page de modification du profil
     - Faire la page de modification du mot de passe
     - Finir l'analyse fonctionnelle de la documentation technique
     - Faire le CRUD pour la partie table jeuvideo avec ses genres et sa platforme
 
-## 07:58
+### 07:58
 J'ai rajouté au canevas un moyen pour l'utilisateur de se connecter ou se déconnecter si ce dernier et connecté ou non.
 
-## 08:06
+### 08:06
 Je suis revenu à la page profil pour ajouter une condition disant que si l'utilisateur est anonyme, ainsi il ne pourra pas acceder à la page profil tant qu'il restera anonyme.
 
-## 10:30
+### 10:30
 Visite du maître d'apprentissage. Nous avons parler de l'avancement de mon TPI et aussi de mon journal de bord . Il m'a conseillé d'écrire à partir de maintenant, à chaque fois que la journée commence, je devais écrire les objectif pour aujourd'hui dans le journal de bord.
 
-## 13:39
+### 13:39
 Le maître d'apprentissage m'a expliqué que pour les commits que je faisais sur Github je devais donnais un commentaire et à la fin je devais regrouper tout les commits et les mettres dans la documentation technique en annexes. Il m'a aussi expliqué où est ce que je pourrai trouvai les genres pour les jeu.
 
-## 14:50
+### 14:50
 J'ai proposé au maître une idée de comment faire la relation entre utilisateur-administrateur pour la page d'édition de jeu vidéo. J'ai proposé l'idée que l'utilisateur remplit les champs pour ajouter le jeu puis clique sur le bouton proposer, ensuite l'administrateur arrive sur la page et peut ajouter le jeu proposer ou modifier les données avant de l'ajouter.
 
-## 15:20
+### 15:20
 Je me suis rappeler comment on écriver une injection XSS. Exemple(<!--<script>alert("wowow")</script>-->). Je l'essaierai pour tester la sécurité des formulaires un autre jour. Et pour contrer cette attaque, je pense chercher une fonction enlevant les balises html en php.
 
-## 15:50
+### 15:50
 J'ai discuté avec le maître au sujet des PEGI pour la table jeuvideo et lui ai proposé de faire une table pegi avec comme donnée les différentes tranches d'âge et les différentes contenus sensible. Il a accepté.
 
-## 16:10
+### 16:10
 J'ai discuté avec le maître à propos du plan de test si je devais le faire maintenant ou non et j'en ai conclu de commencé les testes à partir de maintenant.
 
 ## Bilan de la journée
 Aujourd'hui j'ai fini la page de modification du profil, de modification du mot de passe, ai presque fini l'analyse fonctionnelle (il me manque juste la dernière maquette sur l'édition de jeu) et ai presque fini de tester de et de déboger la partie utilisateur(manque les injections). Je n'ai pas commencé le CRUD sur les jeux vidéo. Et n'ai pas fini le plan de test. Tout ce qui manque aujourd'hui je l'ai finirai demain si je peux.
 
-### 04.05.2023
+## 04.05.2023
+### Objectif:
     - Finir l'analyse fonctionnelle de la documentation technique
     - Finir le plan de test sur la partie utilisateur
     - Faire les fonctions contre les injections.
@@ -178,5 +179,39 @@ J'ai encore consulté avec mon maître mais pour savoir si mon énorme au niveau
 
 ## Bilan de la journée
 
-Très grave, je n'ai fait que les 4 premières tâche que j'ai mis en objectif aujourd'hui, pour le reste je n'ai que fais la moitié chacun et pour la dernière je ne l'ai pas faite. Je dois absolument tout rattarper avant le 7 ème jour et finir le site le 8ème jour.
+Très grave, je n'ai fait que les 4 premières tâche que j'ai mis en objectif aujourd'hui, pour le reste je n'ai que fais la moitié chacun et pour la dernière je ne l'ai pas faite. Je dois absolument tout rattarper avant le 7 ème jour et finir le site le 8ème jour. J'avais aussi des bug à régler concernant les fonctions pour les utilisateurs.
 
+## 08.05.2023
+### Objectif:
+
+    - Finir le CRUD pour la partie table jeuvideo avec ses genres, ses plateformes et ses pegi
+    - Finir CRUD pour la table commentaire
+    - Finir Fonction pour l'ajout + modification des notes
+    - Finir un début de la fonction pour l'affichage des notes du jeux avec ses commentaires et de quel utilisateur
+    - Faire un début pour les fonctionnalités de la recherche
+    - Faire un début de la page d'accueil
+
+
+## 08:58
+Je galère concernant les fonctions d'affichage d'ajout, de modification et d'affichage sur la table jeuvideo, à cause des tables pegi, plateforme et genre. Je ne sais pas comment faire pour faire en sorte
+
+## 10:42
+J'ai consulté avec mon maître concernant la base de données et mon problème avec les liasons avec la table jeuvideo, et il m'a conseillé de créer des table de liason au lieu de mettre des id en commun dans chaque table et d'utiliser la fonction group_contact() (fonction qui concatène) en sql si je voulais mettre par exemple plusieur genre dans une seul ligne pour un jeu au moment de l'affichage, il m'a aussi aidé pour corriger quelque fauteconcernant la structure de ma base de donnée.
+
+## 10:50
+J'ai un problème concernant une requête sql, quand je concatène des mots d'un champs, ils apparaîssent en double
+
+## 10:54
+Je me suis rappelé que la requête DISTINCT existait pour éviter les doublons.
+
+## 11:25
+J'ai un souci je n'arrive pas à trouver pourquoi je ne peux pas utiliser le roder by avec le group by.
+
+## 11:30
+Fausse alerte, j'ai juste mal placé le order by, fallait le mettre en bas.
+
+## 16:35
+J'ai oublié ce qu'était la différence entre mld et mcd, j'ai trouvé la réponse sur "https://www.base-de-donnees.com/mcd/".
+
+## Bilan de la journée
+J'ai à peu près rattrapé mon retard il faut juste que je termine pour la prochaine fois la page d'accueil et les fonctionnalité sur la recherche, sinon pour le reste auquel j'avais du retard, c'est fait il faudra juste les testers pour confirmer que c'est fini. J'ai aussi commencé l'analyse organique mais n'est pas encore fini.
