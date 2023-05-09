@@ -265,13 +265,14 @@ function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 /**
  *
  *
- * @param string $string chaîne de charactère récupèré
+ * @param string $chaineCharactere chaîne de charactère récupèré
  * @return string
  */
-function antiInjectionXSS($string)
+function antiInjectionXSS($chaineCharactere)
 {
-	$string = htmlspecialchars($string, ENT_QUOTES);
-	$string = strip_tags($string);
-	$string = addslashes($string);
-	return $string;
+	$chaineCharactere = htmlspecialchars($chaineCharactere, ENT_QUOTES);
+	$chaineCharactere = strip_tags($chaineCharactere);
+	$chaineCharactere = addslashes($chaineCharactere);
+	return $chaineCharactere;
 }
+

@@ -147,35 +147,35 @@ Aujourd'hui j'ai fini la page de modification du profil, de modification du mot 
     - Fonction pour l'ajout + modification des notes
     - Faire un début de la fonction pour l'affichage des notes du jeux avec ses commentaires et de quel utilisateur
 
-## 08:43
+### 08:43
 Pour éviter les injections XSS, je suis aller chercher un moyen sur internet. J'ai appris sur le site "https://brightsec.com/blog/cross-site-scripting-php/" que le moyen le plus efficace pour les enlever serait d'utiliser les fonctions, htmlspecialchars(), strip_tags() et addslashes(). Le premier remplace les charactère spéciaux en entité HTML, le deuxième enlève les balises HTML et PHP d'une chaîne de charactère et le dernier ajoute des antislashs à la chaîne de charactère 
 
-## 10:10
+### 10:10
 J'ai discuté avec le maître concernant la table plateforme car je n'avais pas compris si c'était libre de choix pour les plateforme ou s'il y avait une liste défini. Au final c'est libre de choix.
 
-## 11:14
+### 11:14
 La fonction ajout de la table jeuvideo pourrai fonctionnais si j'utilise des transaction avec la table commentaire.
 
-## 11:20
+### 11:20
 Je remarque je n'arrive plus à me connecté et je ne trouve pas l'erreur, à un moment le mot de passe et l'email devient vide alors que je les ajouter dans le formulaire.
 
-## 11:40
+### 11:40
 Fausse alerte mon maître m'a montrer que l'erreur venait juste d'un égal en moins dans les ifs que j'avais enlever sans le vouloir.
 
-## 11:53 
+### 11:53 
 J'ai remarqué une erreur dans la modification du profil, Si l'utilisateur ne veut pas changer son email ou son pseudo alors il y aura un souci. À cause de mes fonctions VerifieSimilaireEmail() et VerifieSimilairePseudo() et bien ils comprendront que le pseudo et l'email n'ont pas changer et affichera du coup une erreur. Je pense trouver la solution, au moment où l'utilisateur clique sur le bouton pour modifier, on remplace dans le back-end l'email et le pseudo par du vide, ensuite on verifie s'il y des similarités chez d'autre utilisateur pour l'email et le pseudo et enfin on modifie l'email et le pseudo par ce que l'utilisateur a mis dans les champs.
 
-## 12:50
+### 12:50
 Mon maître m'a fait la remarque que ma fonction VerifieUtilisateurExiste() était pas bien si la base de donnée possédait plus de 1000 utilisateur par exemple car ma fonction fait une recherche pour chaque utilisateur un par un ce qui peut être long avec 100 utilisateur, je vais mettre comme solution une fonction qui récupère toute les données de l'utilisateur à l'aide de son identifiant puis comparera l'email et le mot de passe avec la fonction VerifyUtilisateurExiste, comme l'email et le pseudo sont aussi unique alors ce sera plus rapide.
 
-## 13:00
+### 13:00
 Visite de l'expert Borys Folomietow. Nous avons parler de ma journée, de ma progression, de mes problèmes et des solutions que je comptais essayais pour les résoudres.
 
-## 16:13
+### 16:13
 J'ai consulté avec mon maître concernant la multiciplité entre la table commentaire et la table jeuVideo qui me laissais dubitatif, puis on a compris que la multaplicité est tout simplement inversé.
 
-## 16:18
-J'ai encore consulté avec mon maître mais pour savoir si mon énorme au niveau du planning prévisionnel était trop grave et il m'a conseillé de finir tout le code du site d'ici le 8ème jour.
+### 16:18
+J'ai encore consulté avec mon maître mais pour savoir, si au niveau du planning prévisionnel, c'était grave d'être trop en retard et il m'a conseillé de finir tout le code du site d'ici le 8ème jour.
 
 ## Bilan de la journée
 
@@ -192,26 +192,57 @@ Très grave, je n'ai fait que les 4 premières tâche que j'ai mis en objectif a
     - Faire un début de la page d'accueil
 
 
-## 08:58
+### 08:58
 Je galère concernant les fonctions d'affichage d'ajout, de modification et d'affichage sur la table jeuvideo, à cause des tables pegi, plateforme et genre. Je ne sais pas comment faire pour faire en sorte
 
-## 10:42
+### 10:42
 J'ai consulté avec mon maître concernant la base de données et mon problème avec les liasons avec la table jeuvideo, et il m'a conseillé de créer des table de liason au lieu de mettre des id en commun dans chaque table et d'utiliser la fonction group_contact() (fonction qui concatène) en sql si je voulais mettre par exemple plusieur genre dans une seul ligne pour un jeu au moment de l'affichage, il m'a aussi aidé pour corriger quelque fauteconcernant la structure de ma base de donnée.
 
-## 10:50
+### 10:50
 J'ai un problème concernant une requête sql, quand je concatène des mots d'un champs, ils apparaîssent en double
 
-## 10:54
+### 10:54
 Je me suis rappelé que la requête DISTINCT existait pour éviter les doublons.
 
-## 11:25
+### 11:25
 J'ai un souci je n'arrive pas à trouver pourquoi je ne peux pas utiliser le roder by avec le group by.
 
-## 11:30
+### 11:30
 Fausse alerte, j'ai juste mal placé le order by, fallait le mettre en bas.
 
-## 16:35
+### 16:35
 J'ai oublié ce qu'était la différence entre mld et mcd, j'ai trouvé la réponse sur "https://www.base-de-donnees.com/mcd/".
 
 ## Bilan de la journée
 J'ai à peu près rattrapé mon retard il faut juste que je termine pour la prochaine fois la page d'accueil et les fonctionnalité sur la recherche, sinon pour le reste auquel j'avais du retard, c'est fait il faudra juste les testers pour confirmer que c'est fini. J'ai aussi commencé l'analyse organique mais n'est pas encore fini.
+
+## 09.05.2023
+### Objectif:
+    - Finir les fonctionnalités pour la recherche
+    - Finir la page d'accueil
+    - Finir l'insertion de la de la base de données
+    - Continuer l'analyse organique
+    - Continuer le plan de test
+
+
+### 09:20
+Je vais modifier la fonction RecupereToutLesJeux() et lui ajouté la possibilité d'afficher sa note et du coup enlever la fonction RecupereNoteJeu($idJeuVideo) car il sers à rien dans ce cas, pour l'instatnt je cherche la bonne requête SQL à écrire.
+
+### 10:15
+J'ai réglé le problème avec mon maître, il m'a expliqué qu'il fallait que j'utilise la fonction AVG() pour cacluler la moyenne de la note et ainsi l'afficher, et m'a aussi éclairci sur les tranche d'âge pegi à nouveau en expliquant que je devrai ajouter le champs "trancheAge" dans la table "jeuvideo" et non dans "pegi" ce que je n'avais pas compris  lorsqu'on en a parlé pour la première fois.
+
+
+### 15:04
+J'ai un problème avec le formulaire de recherche, je ne sais pas comment je pourrais traité les données reçu à partir des checkbox. Je pense que l'idée d'avoir multidimensionnel pour être utilie, je testerai ça plus tard.
+
+### 15:37
+Je pense pouvoir réussir si j'utilise la même méthode que sur ce "https://www.deleze.name/marcel/php/html-php/index.html". 
+
+### 15:51
+Je vais factoriser les traitement pour la recherche car cela devient difficile de s'y retrouvé.
+
+### 16:10
+J'ai rencontré un problème auquel je n'y avais pas pensé, si l'utilisateur met dans la bar de recherche des espaces, la page n'affichera rien. Du coup j'ai la même erreur dans les autre a page, pour l'inscription ou la modification de profil. Je regarderai peut-être sur le site "https://stackoverflow.com/questions/9587907/how-to-check-if-string-has-at-least-one-letter-number-and-special-character-in" pour comment faire.
+
+## Bilan de la journée
+J'ai fais toutes les tâches sauf celui du premier, la page d'accueil est en période de teste pour l'instant. J'ai réglé le bug de la fonction RecupereToutLesJeux(). J'ai trouvé une nouvelle erreur concernant les champs contenant des espaces que je corrigerai la prochaine fois. Je dois encore tester le CRUD  pour la table  jeuvideo (sauf l'affichage, celui-là et corriger) et ses liaisons.

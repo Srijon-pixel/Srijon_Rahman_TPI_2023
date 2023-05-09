@@ -72,7 +72,7 @@
             $erreurMotDePasse = ERREUR;
         }
 
-        if ($idUtilisateur > 0 &&  $erreurEmail != ERREUR) {
+        if ($idUtilisateur > 0 &&  $erreurMotDePasse != ERREUR) {
             if (modifierMotDePasse($idUtilisateur, $motDePasse)) {
                 header('Location: profil.php');
                 exit;

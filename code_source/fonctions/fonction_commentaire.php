@@ -2,9 +2,9 @@
 
 /**
  * Auteur: Mofassel Haque Srijon Rahman
- * Date: 27.04.2023
+ * Date: 04.05.2023
  * Projet: TPI video game club
- * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
+ * Détail: Regroupe toutes les fonctionnalités pour les commentaires sur les jeux vidéo du sites
  */
 require_once './bd/base_de_donnee.php';
 require_once './classe/commentaire.php';

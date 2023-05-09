@@ -58,6 +58,7 @@
 
 
     if (isset($_POST['identification'])) {
+        
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $email = strip_tags($email);
         $email = addslashes($email);

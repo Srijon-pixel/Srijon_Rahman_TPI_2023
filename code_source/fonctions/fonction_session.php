@@ -3,7 +3,7 @@
  * Auteur: Srijon Rahman
  * Date: 27.04.2023
  * Projet: TPI video game club
- * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
+ * Détail: Regroupe toutes les fonctionnalités pour les seesions d'utilisateurs du sites
  */
 
 require_once './fonctions/fonction_utilisateur.php';

@@ -16,6 +16,7 @@ class EJeuVideo
      * @param string $InImageEncode le statut que porte l'utilisateur
      * @param string $InDescription le mot de passe de l'utilisateur
      * @param bool $InProposition indique si le jeu est proposer ou non
+     * @param bool $InNote la note attribuer au jeu
      */
     public function __construct(
         $InIdJeuVideo,
@@ -29,7 +30,8 @@ class EJeuVideo
         $InGenre,
         $InPlateforme,
         $InTrancheAge,
-        $InContenuSensible
+        $InContenuSensible,
+        $InNote
 
     ) {
 
@@ -45,6 +47,7 @@ class EJeuVideo
         $this->plateforme = $InPlateforme;
         $this->trancheAge = $InTrancheAge;
         $this->contenuSensible = $InContenuSensible;
+        $this->note = $InNote;
     }
 
 
@@ -97,4 +100,8 @@ class EJeuVideo
      * @var string indique les contenus potentiellement suceptilbles de sensibiliser la personne
      */
     public $contenuSensible;
+    /**
+     * @var double indique les contenus potentiellement suceptilbles de sensibiliser la personne
+     */
+    public $note;
 }

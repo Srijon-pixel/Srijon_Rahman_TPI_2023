@@ -2,9 +2,9 @@
 
 /**
  * Auteur: Mofassel Haque Srijon Rahman
- * Date: 27.04.2023
+ * Date: 04.05.2023
  * Projet: TPI video game club
- * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
+ * Détail: Regroupe toutes les fonctionnalités pour les jeux vidéo du sites
  */
 require_once './bd/base_de_donnee.php';
 require_once './classe/jeuVideo.php';
@@ -22,14 +22,16 @@ function RecupereToutLesJeuxVideo()
 	$arr = array();
 
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
-	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`proposition`,
+	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
+	 `jeuVideo`.`proposition`, AVG(`notation`.`note`) AS `Note`,
 
 	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
 	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
-    GROUP_CONCAT(DISTINCT `pegi`.`trancheAge` SEPARATOR \", \") AS `tranche âge`,
 	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
-    FROM `jeuVideo`
+    FROM `jeuVideo` 
 
+	JOIN `notation` ON `jeuVideo`.`idJeuVideo` = `notation`.`idNotation`
+    
     JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
     JOIN `genre` ON `liaison_genre_jeu`.`idGenre` = `genre`.`idGenre` 
     
@@ -62,8 +64,9 @@ function RecupereToutLesJeuxVideo()
 			$row['proposition'],
 			$row['genres'],
 			$row['plateformes'],
-			$row['tranche âge'],
-			$row['contenu sensible']
+			$row['trancheAge'],
+			$row['contenu sensible'],
+			$row['Note']
 
 		);
 		// On place l'objet EJeuVideo créé dans le tableau
@@ -85,14 +88,16 @@ function RecupereJeuVideoParId($idJeuVideo)
 	$arr = array();
 
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
-	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`proposition`,
+	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
+	 `jeuVideo`.`proposition`, AVG(`notation`.`note`) AS `Note`,
 
 	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
 	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
-    GROUP_CONCAT(DISTINCT `pegi`.`trancheAge` SEPARATOR \", \") AS `tranche âge`,
 	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
-    FROM `jeuVideo`
+    FROM `jeuVideo` 
 
+	JOIN `notation` ON `jeuVideo`.`idJeuVideo` = `notation`.`idNotation`
+    
     JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
     JOIN `genre` ON `liaison_genre_jeu`.`idGenre` = `genre`.`idGenre` 
     
@@ -124,8 +129,9 @@ function RecupereJeuVideoParId($idJeuVideo)
 			$row['proposition'],
 			$row['genres'],
 			$row['plateformes'],
-			$row['tranche âge'],
-			$row['contenu sensible']
+			$row['trancheAge'],
+			$row['contenu sensible'],
+			$row['Note']
 
 		);
 		// On place l'objet EJeuVideo créé dans le tableau
@@ -307,14 +313,16 @@ function RechercherJeu($motCle)
 {
 	$arr = array();
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
-	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`proposition`,
+	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
+	 `jeuVideo`.`proposition`, AVG(`notation`.`note`) AS `Note`,
 
 	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
 	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
-    GROUP_CONCAT(DISTINCT `pegi`.`trancheAge` SEPARATOR \", \") AS `tranche âge`,
 	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
-    FROM `jeuVideo`
+    FROM `jeuVideo` 
 
+	JOIN `notation` ON `jeuVideo`.`idJeuVideo` = `notation`.`idNotation`
+    
     JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
     JOIN `genre` ON `liaison_genre_jeu`.`idGenre` = `genre`.`idGenre` 
     
@@ -345,8 +353,10 @@ function RechercherJeu($motCle)
 			$row['proposition'],
 			$row['genres'],
 			$row['plateformes'],
-			$row['tranche âge'],
-			$row['contenu sensible']
+			$row['trancheAge'],
+			$row['contenu sensible'],
+			$row['Note']
+
 		);
 		array_push($arr, $c);
 	}
