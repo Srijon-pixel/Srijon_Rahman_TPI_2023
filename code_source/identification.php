@@ -1,11 +1,13 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Page affichant un formulaire pour l'utilisateur afin de se connecter si ce dernier possède déjà un compte enceint du site
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 02.05.2023
-    Projet: TPI video game club
-    Détail: Page affichant un formulaire pour l'utilisateur afin de se connecter si ce dernier possède déjà un compte enceint du site
--->
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -23,8 +25,8 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
 
-    //variables
-    const ERREUR = "red";
+    //Variables
+    const COULEUR_MESSAGE_ERREUR = "red";
 
     $email = "";
     $motDePasse = "";
@@ -53,6 +55,7 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
 
@@ -63,16 +66,16 @@
         $email = strip_tags($email);
         $email = addslashes($email);
         if ($email == false || $email == "") {
-            $erreurEmail = ERREUR;
+            $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
         if ($motDePasse == false || $motDePasse == "") {
-            $erreurMotDePasse = ERREUR;
+            $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($erreurMotDePasse != ERREUR && $erreurEmail != ERREUR) {
+        if ($erreurMotDePasse != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
             if (VerifieUtilisateurExiste($email, $motDePasse)) {
                 $_SESSION['idUtilisateur'] = RecupereUtilisateurParEmail($email);
                 header("location: profil.php");
@@ -115,11 +118,11 @@
 
         <form action="" method="POST">
 
-            <label for="email" style="color:<?php echo $erreurEmail; ?>">Email:</label><br>
-            <input type="email" name="email" value="<?php echo $email; ?>"><br>
+            <label for="email" style="color:<?= $erreurEmail; ?>">Email:</label><br>
+            <input type="email" name="email" value="<?= $email; ?>"><br>
 
-            <label for="motDePasse" style="color:<?php echo $erreurMotDePasse; ?>">Mot de passe : </label><br>
-            <input type="password" name="motDePasse" value="<?php echo $motDePasse; ?>"><br>
+            <label for="motDePasse" style="color:<?= $erreurMotDePasse; ?>">Mot de passe : </label><br>
+            <input type="password" name="motDePasse" value="<?= $motDePasse; ?>"><br>
 
             <input type="submit" name="identification" value="S'identifier" class="btn btn-primary"><br>
             <a href="./inscription.php">Pas de compte ?</a>

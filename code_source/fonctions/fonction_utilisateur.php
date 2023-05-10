@@ -19,7 +19,7 @@ require_once './classe/utilisateur.php';
  */
 function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 {
-	$sql = "INSERT INTO `video_game_club`.`utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,0,:m)";
+	$sql = "INSERT INTO `utilisateur` (`nom`, `prenom`, `pseudo`, `email`, `statut`, `motDePasse`) VALUES(:n,:pr,:ps,:e,0,:m)";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":n" => $nom, ":pr" => $prenom, ":ps" => $pseudo, ":e" => $email, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
@@ -36,7 +36,7 @@ function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
  */
 function SupprimerUtilisateur($idUtilisateur)
 {
-	$sql = "DELETE FROM `video_game_club`.`utilisateur` WHERE `utilisateur`.`idUtilisateur` = :i";
+	$sql = "DELETE FROM `utilisateur` WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":i" => $idUtilisateur));
@@ -54,7 +54,7 @@ function SupprimerUtilisateur($idUtilisateur)
  */
 function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 {
-	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`nom` = :n, `utilisateur`.`prenom` = :pr, 
+	$sql = "UPDATE `utilisateur` SET `utilisateur`.`nom` = :n, `utilisateur`.`prenom` = :pr, 
 	`utilisateur`.`pseudo` = :ps, `utilisateur`.`email` = :e WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -73,7 +73,7 @@ function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
  */
 function modifierMotDePasse($idUtilisateur, $motDePasse)
 {
-	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`motDePasse` = :m WHERE `utilisateur`.`idUtilisateur` = :i";
+	$sql = "UPDATE `utilisateur` SET `utilisateur`.`motDePasse` = :m WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":i" => $idUtilisateur, ":m" => password_hash($motDePasse, PASSWORD_BCRYPT)));
@@ -91,7 +91,7 @@ function modifierMotDePasse($idUtilisateur, $motDePasse)
  */
 function modifierEmailPseudo($idUtilisateur)
 {
-	$sql = "UPDATE `video_game_club`.`utilisateur` SET `utilisateur`.`pseudo` = \"\", `utilisateur`.`email` = \"\"
+	$sql = "UPDATE `utilisateur` SET `utilisateur`.`pseudo` = \"\", `utilisateur`.`email` = \"\"
 	 WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -131,7 +131,7 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
 {
 	$arr = array();
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
-	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur
+	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM `utilisateur`
     WHERE utilisateur.idUtilisateur = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -160,7 +160,7 @@ function RecuperationDonneeUtilisateurParEmail($email)
 {
 	$arr = array();
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
-	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM utilisateur
+	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM `utilisateur`
     WHERE utilisateur.email = :e";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -193,7 +193,7 @@ function RecuperationDonneeUtilisateurParEmail($email)
  */
 function RecupereUtilisateurParEmail($email)
 {
-	$sql = "SELECT idUtilisateur FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
+	$sql = "SELECT `idUtilisateur` FROM `utilisateur`  WHERE `utilisateur`.`email` = :e";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':e' => $email));
@@ -207,7 +207,7 @@ function RecupereUtilisateurParEmail($email)
 
 function VerifieEmailSimilaire($email)
 {
-	$sql = "SELECT email FROM video_game_club.utilisateur  WHERE utilisateur.email = :e";
+	$sql = "SELECT `email` FROM `utilisateur`  WHERE `utilisateur`.`email` = :e";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':e' => $email));
@@ -229,7 +229,7 @@ function VerifieEmailSimilaire($email)
  */
 function VerifiePseudoSimilaire($pseudo)
 {
-	$sql = "SELECT pseudo FROM video_game_club.utilisateur  WHERE utilisateur.pseudo = :ps";
+	$sql = "SELECT `pseudo` FROM `utilisateur`  WHERE `utilisateur`.`pseudo` = :ps";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(':ps' => $pseudo));
@@ -265,7 +265,7 @@ function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 /**
  *
  *
- * @param string $chaineCharactere chaîne de charactère récupèré
+ * @param string $chaineCharactere chaîne de caractère récupèré
  * @return string
  */
 function antiInjectionXSS($chaineCharactere)

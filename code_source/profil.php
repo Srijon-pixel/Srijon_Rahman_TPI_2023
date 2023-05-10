@@ -1,11 +1,13 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Page affichant les données de l'utilisateur
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 02.05.2023
-    Projet: TPI video game club
-    Détail: Page affichant les données sur l'utilisateur
--->
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -23,7 +25,6 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
 
-    
     $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
@@ -49,11 +50,12 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
 
-    $enregistrements = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
-    if ($enregistrements === false) {
+    $donneesUtilisateur = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
+    if ($donneesUtilisateur === false) {
         echo "Les données de l'utilisateur ne peuvent être affichées. Une erreur s'est produite.";
         exit;
     }
@@ -85,7 +87,7 @@
     </header>
     <main>
         <form action="#" method="POST">
-            <?php foreach ($enregistrements as $utilisateur) {
+            <?php foreach ($donneesUtilisateur as $utilisateur) {
 
                 echo "<label for=\"nom\">Votre nom :</label><br>";
                 echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\" readonly><br>";

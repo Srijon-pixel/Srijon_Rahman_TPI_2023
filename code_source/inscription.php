@@ -1,11 +1,13 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Page permettant à l'utilisateur de créer son compte enceint du site
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 02.05.2023
-    Projet: TPI video game club
-    Détail: Page permettant à l'utilisateur de créer son compte enceint du site 
--->
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -23,7 +25,7 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
 
-    const ERREUR = "red";
+    const COULEUR_MESSAGE_ERREUR = "red";
 
     $nom = "";
     $prenom = "";
@@ -58,6 +60,7 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
 
@@ -68,41 +71,42 @@
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
         if ($nom == false || $nom == "") {
-            $erreurNom = ERREUR;
+            $erreurNom = COULEUR_MESSAGE_ERREUR;
         }
 
         $prenom = filter_input(INPUT_POST, 'prenom');
         $prenom = antiInjectionXSS($prenom);
         if ($prenom == false || $prenom == "") {
-            $erreurPrenom = ERREUR;
+            $erreurPrenom = COULEUR_MESSAGE_ERREUR;
         }
 
         $pseudo = filter_input(INPUT_POST, 'pseudo');
         $pseudo = antiInjectionXSS($pseudo);
         if ($pseudo == false || $pseudo == "") {
-            $erreurPseudo = ERREUR;
+            $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         } elseif (VerifiePseudoSimilaire($pseudo) == $pseudo) {
             echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
-            $erreurPseudo = ERREUR;
+            $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         }
 
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $email = strip_tags($email);
         $email = addslashes($email);
         if ($email == false || $email == "") {
-            $erreurEmail = ERREUR;
+            $erreurEmail = COULEUR_MESSAGE_ERREUR;
         } elseif (VerifieEmailSimilaire($email) == $email) {
             echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
-            $erreurEmail = ERREUR;
+            $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
         if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
-            $erreurMotDePasse = ERREUR;
+            $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($erreurNom != ERREUR && $erreurPrenom != ERREUR && $erreurPseudo != ERREUR && $erreurEmail != ERREUR && $erreurMotDePasse != ERREUR) {
+        if ($erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
+        && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR && $erreurMotDePasse != COULEUR_MESSAGE_ERREUR) {
             if (AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)) {
                 header('Location: identification.php');
                 exit;
@@ -139,20 +143,20 @@
     <main>
 
         <form action="" method="POST">
-            <label for="nom" style="color:<?php echo $erreurNom; ?>">Votre nom :</label><br>
-            <input type="text" name="nom" value="<?php echo $nom; ?>"> <br>
+            <label for="nom" style="color:<?= $erreurNom; ?>">Votre nom :</label><br>
+            <input type="text" name="nom" value="<?= $nom; ?>"> <br>
 
-            <label for="prenom" style="color:<?php echo $erreurPrenom; ?>">Votre prénom :</label><br>
-            <input type="text" name="prenom" value="<?php echo $prenom; ?>"> <br>
+            <label for="prenom" style="color:<?= $erreurPrenom; ?>">Votre prénom :</label><br>
+            <input type="text" name="prenom" value="<?= $prenom; ?>"> <br>
 
-            <label for="pseudo" style="color:<?php echo $erreurPseudo; ?>">Votre pseudo :</label><br>
-            <input type="text" name="pseudo" value="<?php echo $pseudo; ?>"> <br>
+            <label for="pseudo" style="color:<?= $erreurPseudo; ?>">Votre pseudo :</label><br>
+            <input type="text" name="pseudo" value="<?= $pseudo; ?>"> <br>
 
-            <label for="email" style="color:<?php echo $erreurEmail; ?>">Votre email:</label><br>
-            <input type="email" name="email" value="<?php echo $email; ?>"><br>
+            <label for="email" style="color:<?= $erreurEmail; ?>">Votre email:</label><br>
+            <input type="email" name="email" value="<?= $email; ?>"><br>
 
-            <label for="motDePasse" style="color:<?php echo $erreurMotDePasse; ?>">Votre mot de passe : </label><br>
-            <input type="password" name="motDePasse" value="<?php echo $motDePasse; ?>" placeholder="Minimum une majuscule, une minuscule, un chiffre et 8 caractères" style="width:19%"><br>
+            <label for="motDePasse" style="color:<?= $erreurMotDePasse; ?>">Votre mot de passe : </label><br>
+            <input type="password" name="motDePasse" value="<?= $motDePasse; ?>" placeholder="Minimum une majuscule, une minuscule, un chiffre et 8 caractères" style="width:19%"><br>
 
             <input type="submit" name="inscription" value="S'inscrire" class="btn btn-primary">
         </form>

@@ -157,7 +157,7 @@ function AjouterJeu(
 	$description,
 	$proposition
 ) {
-	$sql = "INSERT INTO `video_game_club`.`jeuVideo` (`titre`, `version`,`dateSortie`,`datePublication`,
+	$sql = "INSERT INTO `jeuVideo` (`titre`, `version`,`dateSortie`,`datePublication`,
 	`imageEncode`,`description`,`proposition`,`idPegi`,`idGenre`,`idPlateforme`) 
 	VALUES(:t,:v,:ds,:dp,ie,:d,:p,:pe,:ig,:pl)";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -186,11 +186,11 @@ function AjouterJeuAvecLiaisons(
 	$idGenre,
 	$idPlateforme
 ) {
-	$sqlPegi = "INSERT INTO `video_game_club`.`liaison_pegi_jeu` (`idJeuVideo`,`idPegi`) 
+	$sqlPegi = "INSERT INTO `liaison_pegi_jeu` (`idJeuVideo`,`idPegi`) 
 	VALUES(:ij,:pe)";
-	$sqlGenre = "INSERT INTO `video_game_club`.`liaison_genre_jeu` (`idJeuVideo`,`idGenre`) 
+	$sqlGenre = "INSERT INTO `liaison_genre_jeu` (`idJeuVideo`,`idGenre`) 
 	VALUES(:ij,:ig)";
-	$sqlPlateforme = "INSERT INTO `video_game_club`.`liaison_genre_plateforme` (`idJeuVideo`,`idPlateforme`) 
+	$sqlPlateforme = "INSERT INTO `liaison_genre_plateforme` (`idJeuVideo`,`idPlateforme`) 
 	VALUES(:ij,:pl)";
 
 	$statementPegi = EBaseDonnee::prepare($sqlPegi, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -220,7 +220,7 @@ function AjouterJeuAvecLiaisons(
  */
 function SupprimerJeu($idJeuvideo)
 {
-	$sql = "DELETE FROM `video_game_club`.`jeuVideo` WHERE `jeuVideo`.`idJeuvideo` = :ij";
+	$sql = "DELETE FROM `jeuVideo` WHERE `jeuVideo`.`idJeuvideo` = :ij";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(":ij" => $idJeuvideo));
@@ -246,7 +246,7 @@ function ModifierJeu(
 	$description,
 	$proposition
 ) {
-	$sql = "UPDATE `video_game_club`.`jeuVideo`
+	$sql = "UPDATE `jeuVideo`
 	SET `jeuVideo`.`titre` = :t, `jeuVideo`.`version` = :v, `jeuVideo`.`dateSortie` = :ds, 
 	`jeuVideo`.`datePublication` = :dp, `jeuVideo`.`imageEncode` = :ie, 
 	`jeuVideo`.`description` = :d, `jeuVideo`.`proposition` = :p WHERE `jeuVideo`.`idJeuVideo` = :ij";
@@ -275,7 +275,7 @@ function ModifierJeuAvecLiaisons(
 	$idGenre,
 	$idPlateforme
 ) {
-	$sqlPegi = "UPDATE `video_game_club`.`liaison_pegi_jeu`
+	$sqlPegi = "UPDATE `liaison_pegi_jeu`
 	SET `jeuVideo`.`idPegi` = :pe, WHERE `jeuVideo`.`idJeuVideo` = :ij";
 	$sqlGenre = "UPDATE `video_game_club`.`liaison_pegi_genre`
 	SET `jeuVideo`.`idGenre` = :ig, WHERE `jeuVideo`.`idJeuVideo` = :ij";
@@ -309,16 +309,17 @@ function ModifierJeuAvecLiaisons(
  * @return array|bool Un tableau des EJeuVideo
  *                    False si une erreur
  */
-function RechercherJeu($motCle)
+function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 {
 	$arr = array();
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
-	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
+	`jeuVideo`.`datePublication`, `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
 	 `jeuVideo`.`proposition`, AVG(`notation`.`note`) AS `Note`,
 
 	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
 	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
 	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
+
     FROM `jeuVideo` 
 
 	JOIN `notation` ON `jeuVideo`.`idJeuVideo` = `notation`.`idNotation`
@@ -332,7 +333,9 @@ function RechercherJeu($motCle)
 	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
     JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
 
-    WHERE `jeuvideo`.`titre` LIKE '%$motCle%'
+    WHERE `jeuvideo`.`titre` LIKE '%$motCle%' AND `genre`.`nomGenre` LIKE '%$genre%' AND `plateforme`.`nomPlateforme` LIKE '%$plateforme%'
+	AND `jeuvideo`.`trancheAge` <= $ageMax AND `jeuvideo`.`trancheAge` >= $ageMin
+	
 	GROUP BY `jeuvideo`.`idJeuVideo`
 	ORDER BY `jeuVideo`.`dateSortie` DESC LIMIT 20;";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));

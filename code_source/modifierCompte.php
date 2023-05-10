@@ -1,11 +1,13 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Page affichant un formulaire permettant à l'utilisateur de modifier ses données
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 02.05.2023
-    Projet: TPI video game club
-    Détail: Page affichant un formulaire permettant à l'utilisateur de modifier ses données
--->
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -30,7 +32,7 @@
         exit;
     }
 
-    const ERREUR = "red";
+    const COULEUR_MESSAGE_ERREUR = "red";
 
     $nom = "";
     $prenom = "";
@@ -67,56 +69,57 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
 
     if (isset($_POST['modifierCompte'])) {
         $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
-        modifierEmailPseudo($idUtilisateur);
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
         if ($nom == false || $nom == "") {
-            $erreurNom = ERREUR;
+            $erreurNom = COULEUR_MESSAGE_ERREUR;
         }
 
         $prenom = filter_input(INPUT_POST, 'prenom');
         $prenom = antiInjectionXSS($prenom);
         if ($prenom == false || $prenom == "") {
-            $erreurPrenom = ERREUR;
+            $erreurPrenom = COULEUR_MESSAGE_ERREUR;
         }
 
-
+        modifierEmailPseudo($idUtilisateur);
         $pseudo = filter_input(INPUT_POST, 'pseudo');
         $pseudo = antiInjectionXSS($pseudo);
         if ($pseudo == false || $pseudo == "") {
-            $erreurPseudo = ERREUR;
-        } elseif (VerifiePseudoSimilaire($pseudo) == $pseudo) {
+            $erreurPseudo = COULEUR_MESSAGE_ERREUR;
+        } else if (VerifiePseudoSimilaire($pseudo) == $pseudo) {
             echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
-            $erreurPseudo = ERREUR;
+            $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         }
 
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $email = strip_tags($email);
         $email = addslashes($email);
         if ($email == false || $email == "") {
-            $erreurEmail = ERREUR;
-        } elseif (VerifieEmailSimilaire($email) == $email) {
+            $erreurEmail = COULEUR_MESSAGE_ERREUR;
+        } else if (VerifieEmailSimilaire($email) == $email) {
             echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
-            $erreurEmail = ERREUR;
+            $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($idUtilisateur > 0 && $erreurNom != ERREUR && $erreurPrenom != ERREUR && $erreurPseudo != ERREUR && $erreurEmail != ERREUR) {
+        if ($idUtilisateur > 0 && $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
+        && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
             if (modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)) {
                 header('Location: profil.php');
                 exit;
             }
         } else {
-            echo '<script>alert("Pas possible il vous manque des valeurs ou des valeurs existent déjà chez d\'autre compte")</script>';
+            echo '<script>alert("Pas possible il vous manque des valeurs ou des valeurs existent déjà chez un autre compte")</script>';
         }
     }
 
-    $enregistrements = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
-    if ($enregistrements === false) {
+    $donneesUtilisateur = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
+    if ($donneesUtilisateur === false) {
         echo "Les données de l'utilisateur ne peuvent être affichées. Une erreur s'est produite.";
         exit;
     }
@@ -148,7 +151,7 @@
     <main>
 
         <form action="" method="POST">
-            <?php foreach ($enregistrements as $utilisateur) {
+            <?php foreach ($donneesUtilisateur as $utilisateur) {
 
                 echo "<label for=\"nom\" style=\"" . $erreurNom . "\">Votre nom :</label><br>";
                 echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\"><br>";

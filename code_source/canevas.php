@@ -1,11 +1,14 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Modèle de vue pour les autres pages du site
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 27.04.2023
-    Projet: TPI video game club
-    Détail: Modèle de vue pour les autres pages du site
--->
+<html lang="fr">
+
 
 <head>
     <meta charset="UTF-8">
@@ -31,6 +34,7 @@
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
     
+
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -45,6 +49,7 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
     ?>

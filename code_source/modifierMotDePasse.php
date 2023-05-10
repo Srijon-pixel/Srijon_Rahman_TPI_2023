@@ -1,11 +1,13 @@
+<?php
+/**
+* Auteur: Mofassel Haque Srijon Rahman
+* Date: 27.04.2023
+* Projet: TPI video game club
+* Détail: Page permettant à l'utilisateur de modifier son mot de passe
+*/
+?>
 <!DOCTYPE html>
-<html lang="en">
-<!--
-    Auteur: Mofassel Haque Srijon Rahman
-    Date: 27.04.2023
-    Projet: TPI video game club
-    Détail: Modèle de vue pour les autres pages du site
--->
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -29,7 +31,7 @@
         exit;
     }
 
-    const ERREUR = "red";
+    const COULEUR_MESSAGE_ERREUR = "red";
 
     $motDePasse = "";
     $erreurMotDePasse = "";
@@ -59,6 +61,7 @@
         } else {
             session_destroy();
             header("location: index.php");
+            exit;
         }
     }
 
@@ -69,10 +72,10 @@
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
         if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
-            $erreurMotDePasse = ERREUR;
+            $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($idUtilisateur > 0 &&  $erreurMotDePasse != ERREUR) {
+        if ($idUtilisateur > 0 &&  $erreurMotDePasse != COULEUR_MESSAGE_ERREUR) {
             if (modifierMotDePasse($idUtilisateur, $motDePasse)) {
                 header('Location: profil.php');
                 exit;
@@ -82,8 +85,8 @@
         }
     }
 
-    $enregistrements = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
-    if ($enregistrements === false) {
+    $donneesUtilisateur = RecuperationDonneeUtilisateur($utilisateur[0]->idUtilisateur);
+    if ($donneesUtilisateur === false) {
         echo "Les données de l'utilisateur ne peuvent être affichées. Une erreur s'est produite.";
         exit;
     }
@@ -114,7 +117,7 @@
     </header>
     <main>
         <form action="" method="POST">
-            <?php foreach ($enregistrements as $utilisateur) {
+            <?php foreach ($donneesUtilisateur as $utilisateur) {
 
                 echo "<label for=\"motDePasse\" style=\"" . $erreurMotDePasse . "\">Votre mot de passe :</label><br>";
                 echo "<input type=\"password\" name=\"motDePasse\" value=\"" . $utilisateur->motDePasse . "\"  placeholder=\"Minimum une majuscule, une minuscule, un chiffre et 8 caractères\" style=\"width:19%\"><br>";

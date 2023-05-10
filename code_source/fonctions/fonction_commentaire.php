@@ -21,8 +21,11 @@ function RecupereCommentaireJeu($idJeuVideo)
 {
     $arr = array();
 
-    $sql = "SELECT `commentaire`.`idCommentaire`, `commentaire`.`commentaire`, `commentaire`.`dateCommentaire`,
-     `commentaire`.`idUtilisateur`, `commentaire`.`idJeuVideo`  FROM commentaire WHERE idJeuVideo = :ij";
+    $sql = "SELECT `commentaire`.`idCommentaire`, `commentaire`.`commentaire`, `commentaire`.`dateCommentaire`, 
+    `utilisateur`.`pseudo`
+    FROM `commentaire`
+    JOIN `utilisateur` ON `commentaire`.`idUtilisateur` = `utilisateur`.`idUtilisateur`
+    WHERE `commentaire`.`idJeuVideo` = ij";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
         $statement->execute(array(':ij' => $idJeuVideo));
@@ -62,7 +65,7 @@ function AjouterCommentaire(
     $idUtilisateur,
     $idJeuvideo
 ) {
-    $sql = "INSERT INTO `video_game_club`.`jeuVideo` (`commentaire`, `dateCommentaire`,`idUtilisateur`,`idJeuvideo`) 
+    $sql = "INSERT INTO `commentaire` (`commentaire`, `dateCommentaire`,`idUtilisateur`,`idJeuvideo`) 
 	VALUES(:c,:dc,:iu,:ij)";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
@@ -80,7 +83,7 @@ function AjouterCommentaire(
  */
 function SupprimerCommentaire($idCommentaire)
 {
-    $sql = "DELETE FROM `video_game_club`.`commentaire` WHERE `commentaire`.`idCommentaire` = :ic";
+    $sql = "DELETE FROM `commentaire` WHERE `commentaire`.`idCommentaire` = :ic";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
         $statement->execute(array(":ic" => $idCommentaire));
@@ -101,7 +104,7 @@ function ModifierCommentaire(
     $commentaire,
     $dateCommentaire
 ) {
-    $sql = "UPDATE `video_game_club`.`commentaire`
+    $sql = "UPDATE `commentaire`
     SET `commentaire`.`commentaire` = :c, `commentaire`.`dateCommentaire` = :dc
 	WHERE `commentaire`.`idCommentaire` = :ic";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));

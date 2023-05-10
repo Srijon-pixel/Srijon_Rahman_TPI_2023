@@ -224,13 +224,11 @@ J'ai à peu près rattrapé mon retard il faut juste que je termine pour la proc
     - Continuer l'analyse organique
     - Continuer le plan de test
 
-
 ### 09:20
 Je vais modifier la fonction RecupereToutLesJeux() et lui ajouté la possibilité d'afficher sa note et du coup enlever la fonction RecupereNoteJeu($idJeuVideo) car il sers à rien dans ce cas, pour l'instatnt je cherche la bonne requête SQL à écrire.
 
 ### 10:15
 J'ai réglé le problème avec mon maître, il m'a expliqué qu'il fallait que j'utilise la fonction AVG() pour cacluler la moyenne de la note et ainsi l'afficher, et m'a aussi éclairci sur les tranche d'âge pegi à nouveau en expliquant que je devrai ajouter le champs "trancheAge" dans la table "jeuvideo" et non dans "pegi" ce que je n'avais pas compris  lorsqu'on en a parlé pour la première fois.
-
 
 ### 15:04
 J'ai un problème avec le formulaire de recherche, je ne sais pas comment je pourrais traité les données reçu à partir des checkbox. Je pense que l'idée d'avoir multidimensionnel pour être utilie, je testerai ça plus tard.
@@ -246,3 +244,31 @@ J'ai rencontré un problème auquel je n'y avais pas pensé, si l'utilisateur me
 
 ## Bilan de la journée
 J'ai fais toutes les tâches sauf celui du premier, la page d'accueil est en période de teste pour l'instant. J'ai réglé le bug de la fonction RecupereToutLesJeux(). J'ai trouvé une nouvelle erreur concernant les champs contenant des espaces que je corrigerai la prochaine fois. Je dois encore tester le CRUD  pour la table  jeuvideo (sauf l'affichage, celui-là et corriger) et ses liaisons.
+
+## 10.05.2023
+## Objectif:
+    - Finir les fonctionnalités sur la recherche
+    - Faire la page détaillé d'un jeu
+    - Faire un début de la page d'édition d'un jeu
+    - Continuer le plan de test
+
+### 07:41
+J'ai décidé de mettre les genres et plateformes récupérer dans une chaîne de character à l'aide de la fonction implode que j'ai vu sur le site "https://www.php.net/manual/fr/function.implode.php" et qui permet de mettre toute les valeur d'un tableau dans une chaîne de carctère.
+
+### 07:43
+Apparament j'avais mal compris le conseil du maître concernant la finition du site, je ne devais pas finir tout les sites d'ici le 8ème jour mais toutes les fonctionnalité nécessaire et les testes et débogage pour la semaine prochaine, c'est ce que j'ai conclu après avoir parlé avec mon maître.
+
+### 08:14
+Je vais ajouter à la page index un bouton "Détail" sur chaque jeu, ainsi lorsque l'on clique dessus, nous serons à la page détaillé du jeu choisi.
+
+### 11:28
+J'ai à nouveau repéré une nouvelle erreur concernant la modification du compte, si l'utilisateur fait une erreur dans un champs, les champs pseudo ou email deviennent vide à cause de la fonction modifierEmailPseudo();
+
+### 14:13
+J'ai remarqué que pour afficher les commentaires, je n'arrivais pas à afficher le pseudo des utilisateurs ayant poster ces commentaires à cause de ma requête SQL qui n'avais pas de JOIN.
+
+### 15:15
+J'ai consulté avec mon maître à propos d'une erreur dans ma requête SQL pour ajouter un commentaire (qui était au final une erreur concernant le nom de la table) et de comment crée correctement un administrateur sur phpAdmin. Il m'a aussi permi de remarquer qu'il y a des tables qui n'on pas le même jeu de caractère, j'ai compris à l'aide du site "https://support.hostinger.fr/fr/articles/1645813-comment-puis-je-modifier-le-jeu-de-caracteres-de-la-base-de-donnees" comment faire pour modifier sur phpMyAdmin.
+
+## Bilan de la journée
+J'ai finir les fonctions sur la recherche d'un jeu, continuer le plan de test, fais beaucoup de testes et de débogage pour la recherche et pour les fonctionnalité la page detailJeu. Je n'ai pas commencé la page la page d'édition d'un jeu vidéo. J'ai presque fini la page détaillé du jeu vidéo.

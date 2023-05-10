@@ -23,7 +23,7 @@ function AjouterNote(
     $idUtilisateur,
     $idJeuVideo
 ) {
-    $sql = "INSERT INTO `video_game_club`.`notation` (`note`, `idUtilisateur`,`idJeuVideo`) 
+    $sql = "INSERT INTO `notation` (`note`, `idUtilisateur`,`idJeuVideo`) 
 	VALUES(:nt,:iu,:ij)";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
@@ -46,7 +46,7 @@ function modifierNote(
     $idNotation,
     $note
 ) {
-    $sql = "UPDATE `video_game_club`.`notation`
+    $sql = "UPDATE `notation`
     SET `notation`.`note` = :nt
 	WHERE `notation`.`idNotation` = :dn";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));

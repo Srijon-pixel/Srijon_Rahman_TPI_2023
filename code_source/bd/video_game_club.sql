@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : mar. 09 mai 2023 à 09:07
+-- Généré le : mer. 10 mai 2023 à 14:29
 -- Version du serveur : 8.0.30
 -- Version de PHP : 8.1.10
 
@@ -28,9 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `commentaire` (
-  `idComentaire` int NOT NULL,
-  `commentaire` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `dateCommentaire` date NOT NULL,
+  `idCommentaire` int NOT NULL,
+  `commentaire` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `dateCommentaire` datetime NOT NULL,
   `idUtilisateur` int NOT NULL,
   `idJeuVideo` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -39,8 +39,10 @@ CREATE TABLE `commentaire` (
 -- Déchargement des données de la table `commentaire`
 --
 
-INSERT INTO `commentaire` (`idComentaire`, `commentaire`, `dateCommentaire`, `idUtilisateur`, `idJeuVideo`) VALUES
-(1, 'Wow incroyable le jeu !!!', '2023-05-10', 3, 2);
+INSERT INTO `commentaire` (`idCommentaire`, `commentaire`, `dateCommentaire`, `idUtilisateur`, `idJeuVideo`) VALUES
+(1, 'Wow incroyable le jeu !!!', '2023-05-10 00:00:00', 3, 2),
+(2, 'WOW, c\'est jeu incroyable !!!!!!!', '2023-05-17 00:00:00', 6, 2),
+(3, 'FDGDFG', '2023-05-10 00:00:00', 6, 2);
 
 -- --------------------------------------------------------
 
@@ -77,10 +79,10 @@ INSERT INTO `genre` (`idGenre`, `nomGenre`) VALUES
 
 CREATE TABLE `jeuvideo` (
   `idJeuVideo` int NOT NULL,
-  `titre` varchar(75) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `version` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `titre` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `version` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `dateSortie` date NOT NULL,
-  `datePublication` date NOT NULL,
+  `datePublication` date DEFAULT NULL,
   `imageEncode` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `trancheAge` int NOT NULL,
@@ -92,7 +94,7 @@ CREATE TABLE `jeuvideo` (
 --
 
 INSERT INTO `jeuvideo` (`idJeuVideo`, `titre`, `version`, `dateSortie`, `datePublication`, `imageEncode`, `description`, `trancheAge`, `proposition`) VALUES
-(1, 'Game1', '1.0', '2023-05-01', '2023-05-01', '', 'lkahfdslksahfdsd', 16, 0),
+(1, 'Game1', '1.0', '2023-05-01', '2023-05-01', '', 'lkahfdslksahfdsd\r\n\r\nfghf', 16, 0),
 (2, 'Game2', '2.0', '2023-05-04', '2023-05-04', '', 'agfdgsdfg', 18, 0);
 
 -- --------------------------------------------------------
@@ -124,7 +126,7 @@ INSERT INTO `liaison_genre_jeu` (`idGenre`, `idJeuVideo`) VALUES
 CREATE TABLE `liaison_pegi_jeu` (
   `idPegi` int NOT NULL,
   `idJeuVideo` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `liaison_pegi_jeu`
@@ -144,7 +146,7 @@ INSERT INTO `liaison_pegi_jeu` (`idPegi`, `idJeuVideo`) VALUES
 CREATE TABLE `liaison_plateforme_jeu` (
   `idPlateforme` int NOT NULL,
   `idJeuVideo` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `liaison_plateforme_jeu`
@@ -238,7 +240,7 @@ CREATE TABLE `utilisateur` (
   `pseudo` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `statut` tinyint(1) NOT NULL,
-  `motDePasse` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+  `motDePasse` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -250,7 +252,8 @@ INSERT INTO `utilisateur` (`idUtilisateur`, `nom`, `prenom`, `pseudo`, `email`, 
 (2, 'SsSas', 'ADasd', 'BG', 'bg@bggmail.com', 0, '$2y$10$8A4Q6WINiuwxKc3n4eK/4.P.VkcWVk2F6Zxp.wxKx81HQ6iVHD5Ti'),
 (3, 'Beaudgfh', 'Beaudfgh', 'Beaudgh', 'beau@beaugmail.com', 0, '$2y$10$Q62V.XM6deMTzzb5Ykwry.j/UNCnm4dsqfu6KnXZ53G8L3zSd90ky'),
 (4, 'We', 'Wewe', 'Weee', 'we.we@gmail.com', 0, '$2y$10$m.6F7Q5CjCMv/SsBcOmkbu65ZUA9rvOz8AsagSJuyl7edPaWp4BAW'),
-(5, 'ASDfdghsdgffds', 'Srijondfghsdgfg', 'adfsdgf', 'userg@gmail.com', 0, '$2y$10$8IeUt5m8e3YVn5yD81nRf.YnRgxINE5qG1Dj84Bck7usujBW4UNoe');
+(5, 'sdfgsd', 'Srijondfghsdgfghg', 'Wesh', 'pli.pli@gmail.com', 0, '$2y$10$nQMfjlTOmsjnAQdCCx9e.OkME4o9MtFFW5QLRuykehVbp2Kn.KvUq'),
+(6, 'Rahman', 'Mofassel Haque Srijon', 'SriLegi', 'srijon.rhmn@eduge.ch', 0, '$2y$10$FmgtOC3MPoAObBHiRh7ah.x4oNptKTnDqz6n5T5ZdDjET/x6RVfee');
 
 --
 -- Index pour les tables déchargées
@@ -260,7 +263,7 @@ INSERT INTO `utilisateur` (`idUtilisateur`, `nom`, `prenom`, `pseudo`, `email`, 
 -- Index pour la table `commentaire`
 --
 ALTER TABLE `commentaire`
-  ADD PRIMARY KEY (`idComentaire`),
+  ADD PRIMARY KEY (`idCommentaire`),
   ADD KEY `idUtilisateur` (`idUtilisateur`,`idJeuVideo`),
   ADD KEY `idJeuVideo` (`idJeuVideo`);
 
@@ -331,7 +334,7 @@ ALTER TABLE `utilisateur`
 -- AUTO_INCREMENT pour la table `commentaire`
 --
 ALTER TABLE `commentaire`
-  MODIFY `idComentaire` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idCommentaire` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT pour la table `genre`
@@ -367,7 +370,7 @@ ALTER TABLE `plateforme`
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `idUtilisateur` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idUtilisateur` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Contraintes pour les tables déchargées
