@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page d'accueil du site
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page d'accueil du site
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -26,6 +27,7 @@
     require_once './fonctions/fonction_utilisateur.php';
     require_once './fonctions/fonction_session.php';
     require_once './fonctions/fonction_jeuVideo.php';
+    require_once './fonctions/fonction_notation.php';
 
     const DETAIL_BUTTON = "Détail";
     const COULEUR_MESSAGE_ERREUR = "red";
@@ -37,10 +39,14 @@
     $genres = "";
     $ageMin = 0;
     $ageMax = 0;
-    $idDetailJeu = -1;
+    $note = 0;
 
     $erreurAgeMin = "";
     $erreurAgeMax = "";
+
+    $coche = "";
+    $idDetailJeu = -1;
+
 
     $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
@@ -120,6 +126,16 @@
             echo '<script>alert("Les données des jeux ne peuvent être affichées. Une erreur s\'est produite.")</script>';
         }
     }
+   
+    $registreGenre = RecupereGenre();
+    if ($registreGenre === false) {
+        echo '<script>alert("Les genres de jeu vidéo ne peuvent être affichées. Une erreur s\'est produite.")</script>';
+    }
+    $registrePlateforme = RecuperePlateforme();
+    if ($registrePlateforme === false) {
+        echo '<script>alert("Les plateformes des jeux vidéo ne peuvent être affichées. Une erreur s\'est produite.")</script>';
+    }
+    
     $nombreJeux = count(RecupereToutLesJeuxVideo());
     $nombreJeuxRecherche = count(RechercherJeu($titreCle, $genres, $plateformes, $ageMin, $ageMax));
     ?>
@@ -132,7 +148,10 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
+                    <?php if ($utilisateur) {
+                        echo "<li class=\"nav-item\"><a class=\"nav-link\" href=\"./editerJeu.php\">Éditer un jeu vidéo</a></li>";
+                    }
+                    ?>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">
@@ -148,61 +167,71 @@
 
     </header>
     <main>
-        <p>Nombre de jeux vidéo: <?= $nombreJeux; ?> </p><br>
-        <p>Nombre de jeux vidéo trouvé: <?= $nombreJeuxRecherche; ?> </p><br>
+        <aside>
+            <p>Nombre de jeux vidéo: <?= $nombreJeux; ?> </p><br>
+            <p>Nombre de jeux vidéo trouvé: <?= $nombreJeuxRecherche; ?> </p><br>
 
-        <form action="" method="POST">
-            <label for="ageMin" style="color:<?= $erreurAgeMin; ?>">Âge minimum: </label><br>
-            <input type="number" name="ageMin" min="3" max="18" value="<?= $ageMin ?>"><br>
-            <label for="ageMax" style="color:<?= $erreurAgeMax; ?>">Âge maximum: </label><br>
-            <input type="number" name="ageMax" min="3" max="18" value="<?= $ageMax ?>">
-            <p>Plateformes:</p>
-            <input type="checkbox" name="plateforme[]" value="Nintendo switch">Nintendo switch <br>
-            <input type="checkbox" name="plateforme[]" value="PS5"> PS5 <br>
-            <input type="checkbox" name="plateforme[]" value="XBOX SERIES X"> XBOX SERIES X <br>
-            <input type="checkbox" name="plateforme[]" value="XBOX SERIES X"> PC <br>
-            <input type="checkbox" name="plateforme[]" value="Android"> Android <br>
-            <input type="checkbox" name="plateforme[]" value="IOS"> IOS <br>
-            <p>Genres:</p>
-            <input type="checkbox" name="genre[]" value="Action">Action <br>
-            <input type="checkbox" name="genre[]" value="Action-aventure">Action-aventure <br>
-            <input type="checkbox" name="genre[]" value="Aventure">Aventure <br>
-            <input type="checkbox" name="genre[]" value="Simulation">Simulation <br>
-            <input type="checkbox" name="genre[]" value="Stratégie">Stratégie <br>
-            <input type="checkbox" name="genre[]" value="Rythme">Rythme <br>
-            <input type="checkbox" name="genre[]" value="Course">Course <br>
-            <input type="checkbox" name="genre[]" value="Jeu de rôle">Jeu de rôle <br>
-            <input type="checkbox" name="genre[]" value="Réflexion">Réflexion <br>
-            <input type="checkbox" name="genre[]" value="Sport">Sport <br>
+            <form action="" method="POST">
+                <label for="ageMin" style="color:<?= $erreurAgeMin; ?>">Âge minimum: </label><br>
+                <input type="number" name="ageMin" min="3" max="18" value="<?= $ageMin ?>"><br>
+                <label for="ageMax" style="color:<?= $erreurAgeMax; ?>">Âge maximum: </label><br>
+                <input type="number" name="ageMax" min="3" max="18" value="<?= $ageMax ?>">
+                <p>Plateformes:</p>
+                <?php
+                foreach ($registrePlateforme as $plateforme) {
+                    if (isset($_POST["plateforme"]) && in_array($plateforme->nomPlateforme, $_POST["plateforme"])) {
+                        $coche = "checked";
+                    } else {
+                        $coche = "";
+                    }
+                    echo "<input type=\"checkbox\" name=\"plateforme[]\" value=\"$plateforme->nomPlateforme\" $coche>$plateforme->nomPlateforme<br>";
+                }
+                ?>
 
-            <div class="search-container">
+                <p>Genres:</p>
+                <?php
+                foreach ($registreGenre as $genre) {
+                    if (isset($_POST["genre"]) && in_array($genre->nomGenre, $_POST["genre"])) {
+                        $coche = "checked";
+                    } else {
+                        $coche = "";
+                    }
+                    echo "<input type=\"checkbox\" name=\"genre[]\" value=\"$genre->nomGenre\" $coche>$genre->nomGenre<br>";
+                }
+                ?>
 
-                <label for="titreCle"> Rechercher</label><br>
-                <input type="text" placeholder="Rechercher..." name="titreCle" value="<?= $titreCle ?>">
 
-            </div><br>
-            <input type="submit" name="rechercher" class="btn btn-primary" value="Rechercher"><br>
-            <button class="btn btn-secondary"><a href="./index.php">Réinitialiser la recherche</a></button>
+                <div class="search-container">
 
-        </form>
-        <?php
+                    <label for="titreCle"> Rechercher</label><br>
+                    <input type="text" placeholder="Rechercher..." name="titreCle" value="<?= $titreCle ?>">
 
-        foreach ($registreJeu as $jeu) {
-            echo "<div class=\"card\">";
-            echo "<div class=\"container\">";
-            echo "<h3><b>$jeu->titre</b></h3>";
-            echo "<p> Genres: $jeu->genre</p>";
-            echo "<p> Âge PEGI: $jeu->trancheAge</p>";
-            echo "<p> Contenu sensible:$jeu->contenuSensible</p>";
-            echo "<p>Plateformes: $jeu->plateforme</p> ";
-            echo "<p>Date de sortie: $jeu->dateSortie</p>";
-            echo "<p>Note: $jeu->note</p>";
-            echo '<form action="" method="post"><input type="hidden" name="jeu" value="' . $jeu->idJeuVideo . '">';
-            echo '<input type="submit" name="DET" value="' . DETAIL_BUTTON . '"></form>';
-            echo "</div></div>";
-        }
+                </div><br>
+                <input type="submit" name="rechercher" class="btn btn-primary" value="Rechercher"><br>
+                <button class="btn btn-warning"><a href="./index.php">Réinitialiser la recherche</a></button>
 
-        ?>
+            </form>
+        </aside>
+        <div class="main">
+            <?php
+            foreach ($registreJeu as $jeu) {
+                $note = RecupereNoteJeuParId($jeu->idJeuVideo);
+                echo "<div class=\"card\">";
+                echo "<div class=\"container\">";
+                echo "<h3><b>$jeu->titre</b></h3>";
+                echo "<p> Genres: $jeu->genre</p>";
+                echo "<p> Âge PEGI: $jeu->trancheAge</p>";
+                echo "<p> Contenu sensible: $jeu->contenuSensible</p>";
+                echo "<p>Plateformes: $jeu->plateforme</p> ";
+                echo "<p>Date de sortie: $jeu->dateSortie</p>";
+                echo "<p>Note: $note</p>";
+                echo '<form action="" method="post"><input type="hidden" name="jeu" value="' . $jeu->idJeuVideo . '">';
+                echo '<input type="submit" name="DET" class="btn btn-info" value="' . DETAIL_BUTTON . '"></form>';
+                echo "</div></div>";
+            }
+
+            ?>
+        </div>
     </main>
     <footer>
         &copy;Fait par Mofassel Haque Srijon Rahman <br>

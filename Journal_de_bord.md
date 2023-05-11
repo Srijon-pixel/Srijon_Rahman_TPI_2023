@@ -272,3 +272,34 @@ J'ai consulté avec mon maître à propos d'une erreur dans ma requête SQL pour
 
 ## Bilan de la journée
 J'ai finir les fonctions sur la recherche d'un jeu, continuer le plan de test, fais beaucoup de testes et de débogage pour la recherche et pour les fonctionnalité la page detailJeu. Je n'ai pas commencé la page la page d'édition d'un jeu vidéo. J'ai presque fini la page détaillé du jeu vidéo.
+
+## 11.05.23
+## Objectif:
+    - Finir la page détaillé d'un jeu
+    - Faire la page d'édition d'un jeu
+    - corrigé certains bugs, et rendre les case à cocher sticky
+    
+
+### 07:45
+Cyril Rouiller un camarade de classe m'a un peu aidé pour le css et l'alignement des cards. Il m'a appris ce qu'était les grid et il m'a dit qu'ils permettent de rendre la page du site en grille, et m'a conseillé de mettre les formulaire dans une balise aside.
+
+### 08:37
+Mon maître m'a conseillé de faire une boucle foreach pour les champs sticky et mettre les nom des genres et plateformes de la base de donnée
+
+### 10:14
+J'ai modifier la fonction pour l'affichage d'un jeu video, j'ai supprimer la requête pour afficher la note moyenne d'un jeu et l'ai mise sur une autre fonction qui va en retour afficher la note moyenne du jeu à l'aide de son identifiant.
+
+### 11:24
+J'ai un problème avec la note qu'à donnée l'utilisateur au jeu dans la page détaillé d'un jeu, je ne le récupère pas alors qu'elle existe.
+
+### 12:46
+J'ai réglé le problème concernant les espaces à la place des mots dans les champs à l'aide du site "https://stackoverflow.com/questions/9587907/how-to-check-if-string-has-at-least-one-letter-number-and-special-character-in", dedans un utilisateur explique qu'il faut utiliser preg_match(['/[a-zA-Z]/', $string), la fonction va vérifier si dans la variable $string, il y a au moins une lettre.
+
+### 13:15
+J'ai réglé le problème avec la note, il suffit juste de mettre d'ajouter une condition pour afficher la note ou non.
+
+### 15:53
+Pour afficher les tranche d'âge dans le menu déroulant de la page d'édition de jeu, mon maître m'a conseillé de faire un tableau contenant toutes les tranches d'âge et ensuite de le parcourire à l'aide d'un foreach pour afficher les items du tableau. Ainsi la modification du tableau sera plus simple.
+
+## Bilan de la journée
+Auhourd'hui j'ai réussi à réglé pas mal de bug et ai pu finir la page détaillé d'un jeu, je dois encore finir les testes dessus. Je n'ai malheuresement pas fini la page d'édition d'un jeu vidéo, dans cette page il me manque le côté administrateur + le fait de proposer pour l'utilisateur standard, sinon j'ai déjà tout les champs et ai commencé le traitement d'information reçu pour proposer. J'ai aussi rendu les case à coché sticky et j'ai rajouté des message d'erreur dans chaque formulaire.

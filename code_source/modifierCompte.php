@@ -77,20 +77,23 @@
         $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
-        if ($nom == false || $nom == "") {
+        if ($nom == "" || preg_match('/[a-zA-Z]/', $nom) == false) {
+            echo '<script>alert("Veuillez écrire votre nom.")</script>';
             $erreurNom = COULEUR_MESSAGE_ERREUR;
         }
 
         $prenom = filter_input(INPUT_POST, 'prenom');
         $prenom = antiInjectionXSS($prenom);
-        if ($prenom == false || $prenom == "") {
+        if ($prenom == "" || preg_match('/[a-zA-Z]/', $prenom) == false) {
+            echo '<script>alert("Veuillez écrire votre prénom.")</script>';
             $erreurPrenom = COULEUR_MESSAGE_ERREUR;
         }
 
         modifierEmailPseudo($idUtilisateur);
         $pseudo = filter_input(INPUT_POST, 'pseudo');
         $pseudo = antiInjectionXSS($pseudo);
-        if ($pseudo == false || $pseudo == "") {
+        if ($pseudo == "" || preg_match('/[a-zA-Z]/', $pseudo) == false) {
+            echo '<script>alert("Veuillez écrire votre pseudo.")</script>';
             $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         } else if (VerifiePseudoSimilaire($pseudo) == $pseudo) {
             echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
@@ -101,13 +104,14 @@
         $email = strip_tags($email);
         $email = addslashes($email);
         if ($email == false || $email == "") {
+            echo '<script>alert("Veuillez écrire votre email.")</script>';
             $erreurEmail = COULEUR_MESSAGE_ERREUR;
         } else if (VerifieEmailSimilaire($email) == $email) {
             echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
             $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($idUtilisateur > 0 && $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
+        if ($idUtilisateur >= 1 && $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
         && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
             if (modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)) {
                 header('Location: profil.php');
@@ -133,7 +137,10 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
+                    <?php if ($utilisateur) {
+                        echo "<li class=\"nav-item\"><a class=\"nav-link\" href=\"./editerJeu.php\">Éditer un jeu vidéo</a></li>";
+                    }
+                    ?>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">

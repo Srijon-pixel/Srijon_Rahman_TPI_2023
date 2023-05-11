@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page permettant à l'utilisateur de créer son compte enceint du site
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page permettant à l'utilisateur de créer son compte enceint du site
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -70,49 +71,55 @@
 
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
-        if ($nom == false || $nom == "") {
+
+        if ($nom == "" || preg_match('/[a-zA-Z]/', $nom) == false) {
+            echo '<script>alert("Veuillez écrire votre nom.")</script>';
             $erreurNom = COULEUR_MESSAGE_ERREUR;
         }
 
         $prenom = filter_input(INPUT_POST, 'prenom');
         $prenom = antiInjectionXSS($prenom);
-        if ($prenom == false || $prenom == "") {
+        if ($prenom == "" || preg_match('/[a-zA-Z]/', $prenom) == false) {
+            echo '<script>alert("Veuillez écrire votre prénom.")</script>';
             $erreurPrenom = COULEUR_MESSAGE_ERREUR;
         }
 
         $pseudo = filter_input(INPUT_POST, 'pseudo');
         $pseudo = antiInjectionXSS($pseudo);
-        if ($pseudo == false || $pseudo == "") {
+        if ($pseudo == "" || preg_match('/[a-zA-Z]/', $pseudo) == false) {
+            echo '<script>alert("Veuillez écrire votre pseudo.")</script>';
             $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         } elseif (VerifiePseudoSimilaire($pseudo) == $pseudo) {
-            echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
+            echo '<script>alert("Ce pseudo existe déjà chez un autre compte. Veuillez écrire un autre.")</script>';
             $erreurPseudo = COULEUR_MESSAGE_ERREUR;
         }
 
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $email = strip_tags($email);
         $email = addslashes($email);
-        if ($email == false || $email == "") {
+        if ($email == "") {
+            echo '<script>alert("Veuillez écrire votre email.")</script>';
             $erreurEmail = COULEUR_MESSAGE_ERREUR;
         } elseif (VerifieEmailSimilaire($email) == $email) {
-            echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre")</script>';
+            echo '<script>alert("Cet email existe déjà chez un autre compte. Veuillez écrire un autre.")</script>';
             $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
         if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
+            echo '<script>alert("Veuillez écrire votre mot de passe correctement. Il vous faut au minimum une majuscule, une minuscule, un chiffre et 8 caractères ")</script>';
             $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
-        if ($erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
-        && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR && $erreurMotDePasse != COULEUR_MESSAGE_ERREUR) {
+        if (
+            $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR
+            && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR && $erreurMotDePasse != COULEUR_MESSAGE_ERREUR
+        ) {
             if (AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)) {
                 header('Location: identification.php');
                 exit;
             }
-        } else {
-            echo '<script>alert("Une erreur c\'est produite, il vous manque des valeurs ou alors des valeurs sont fausses")</script>';
         }
     }
     ?>
@@ -125,7 +132,10 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
+                    <?php if ($utilisateur) {
+                        echo "<li class=\"nav-item\"><a class=\"nav-link\" href=\"./editerJeu.php\">Éditer un jeu vidéo</a></li>";
+                    }
+                    ?>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">

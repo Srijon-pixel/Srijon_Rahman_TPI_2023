@@ -30,8 +30,7 @@ class EJeuVideo
         $InGenre,
         $InPlateforme,
         $InTrancheAge,
-        $InContenuSensible,
-        $InNote
+        $InContenuSensible
 
     ) {
 
@@ -47,7 +46,6 @@ class EJeuVideo
         $this->plateforme = $InPlateforme;
         $this->trancheAge = $InTrancheAge;
         $this->contenuSensible = $InContenuSensible;
-        $this->note = $InNote;
     }
 
 
@@ -100,8 +98,4 @@ class EJeuVideo
      * @var string indique les contenus potentiellement suceptilbles de sensibiliser la personne
      */
     public $contenuSensible;
-    /**
-     * @var double indique les contenus potentiellement suceptilbles de sensibiliser la personne
-     */
-    public $note;
 }

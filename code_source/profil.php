@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page affichant les données de l'utilisateur
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page affichant les données de l'utilisateur
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -70,7 +71,10 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
+                    <?php if ($utilisateur) {
+                        echo "<li class=\"nav-item\"><a class=\"nav-link\" href=\"./editerJeu.php\">Éditer un jeu vidéo</a></li>";
+                    }
+                    ?>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">

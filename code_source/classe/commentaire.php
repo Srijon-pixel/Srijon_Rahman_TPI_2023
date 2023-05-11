@@ -11,14 +11,14 @@ class ECommentaire
      * @param integer $InIdCommentaire L'identifiant du commentaire
      * @param string $InCommentaire l'avis donné par un utilisateur à un jeu
      * @param string $InDateCommentaire la date du commentaire
+     * @param string $InPseudo le pseudo de la personne ayant commentée
      */
-    public function __construct($InIdCommentaire, $InCommentaire, $InDateCommentaire, $InIdUtilisateur, $InIdJeuVideo)
+    public function __construct($InIdCommentaire, $InCommentaire, $InDateCommentaire, $InPseudo)
     {
         $this->idCommentaire = $InIdCommentaire;
         $this->commentaire = $InCommentaire;
         $this->dateCommentaire = $InDateCommentaire;
-        $this->idUtilisateur = $InIdUtilisateur;
-        $this->idJeuVideo = $InIdJeuVideo;
+        $this->pseudoUtilisateur = $InPseudo;
     }
 
 
@@ -36,11 +36,7 @@ class ECommentaire
      */
     public $dateCommentaire;
     /**
-     * @var integer l'identifiant de l'utilisateur
+     * @var integer le pseudo de la personne ayant commentée
      */
-    public $idUtilisateur;
-    /**
-     * @var integer l'identifiant du jeu vidéo
-     */
-    public $idJeuVideo;
+    public $pseudoUtilisateur;
 }

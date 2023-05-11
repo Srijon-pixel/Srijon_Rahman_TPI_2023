@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page affichant les données d'un jeu vidéo
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page affichant les données d'un jeu vidéo
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -41,8 +42,12 @@
     $note = 0;
     $commentaire = "";
     $dateCommentaire = "";
+    $noteUtilisateur = 0;
     $erreurNote = "";
     $erreurCommentaire = "";
+
+    $nomAttribuerModifier = "attribuer";
+    $boutonNoteTexte = "Attribuer une note";
 
     $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
@@ -56,8 +61,17 @@
         $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+        $tableauNoteUtilisateur = RecupereNoteParIdUtilisateur($utilisateur[0]->idUtilisateur);
+        if ($tableauNoteUtilisateur != false) {
+            $noteUtilisateur = $tableauNoteUtilisateur[0]->note;
+            if ($tableauNoteUtilisateur != false) {
+                $nomAttribuerModifier = "modifier";
+                $boutonNoteTexte = "Modifier la note";
+            }
+        }else{
+            $noteUtilisateur = 0;
+        }
     }
-
 
     if (isset($_POST[$nomConnexionDeconnexion])) {
         if ($nomConnexionDeconnexion == "connexion") {
@@ -70,39 +84,76 @@
         }
     }
 
+
+
+    $jeuVideoSession = RecupereJeuParSession();
+    if ($jeuVideoSession === false) {
+        // Pas de jeu vidéo, donc redirection à la page d'accueil
+        echo "<script>alert(\"Veuillez séléctionnez un jeu vidéo s'il vous plaît.\")</script>";
+        header('Location: index.php');
+        exit;
+    }
+
+    $note = RecupereNoteJeuParId($idJeu);
+
+    $donneesJeu = RecupereJeuVideoParId($idJeu);
+    if ($donneesJeu === false) {
+        echo "<script>alert(\"Une erreur s'est produite. Les données du jeu vidéo ne peuvent être affichées.\")</script>";
+        header('Location: index.php');
+        exit;
+    }
+
+    $listeCommentaire = RecupereCommentaireJeuParId($idJeu);
+    if ($listeCommentaire === false) {
+        echo "<script>alert(\"Une erreur s'est produite. Les commentaire du jeu ne peuvent être affichées.\")</script>";
+        header('Location: index.php');
+        exit;
+    }
+
     if (isset($_POST['poster'])) {
 
-        $dateCommentaire = date("Y-m-d");
+        $dateCommentaire = date("Y-m-d, h:i:s");
         $commentaire = filter_input(INPUT_POST, "commentaire");
         $commentaire = antiInjectionXSS($commentaire);
 
-        if ($commentaire == false || $commentaire == "") {
-            $erreurCommentaire = COULEUR_MESSAGE_ERREUR;
+        if ($commentaire == "" || preg_match('/[a-zA-Z]/', $commentaire) == false) {
             echo '<script>alert("Veuillez ajouter votre commentaire correctement s\'il vous plaît")</script>';
+            $erreurCommentaire = COULEUR_MESSAGE_ERREUR;
         } else {
             if (AjouterCommentaire($commentaire, $dateCommentaire, $utilisateur[0]->idUtilisateur, $idJeu)) {
                 header('Location: detailJeu.php');
                 exit;
             } else {
-                echo '<script>alert("Votre commentaire n\'a pas pu être poster. Une erreur s\'est produite")</script>';
+                echo '<script>alert("Une erreur s\'est produite. Votre commentaire n\'a pas pu être poster.")</script>';
             }
         }
     }
 
-    $jeuVideoSession = RecupereJeuParSession();
 
-    if ($jeuVideoSession === false) {
-        // Pas de jeu vidéo, donc redirection à la page d'accueil
-        header('Location: index.php');
-        exit;
+    if (isset($_POST[$nomAttribuerModifier])) {
+        $note = filter_input(INPUT_POST, "note", FILTER_SANITIZE_NUMBER_INT);
+        $note  = antiInjectionXSS($note);
+        if ($note <= -1 || preg_match('/[a-zA-Z]/', $note)) {
+            $erreurNote = COULEUR_MESSAGE_ERREUR;
+            echo '<script>alert("Veuillez ajouter votre note correctement s\'il vous plaît.")</script>';
+        } else {
+            if ($nomAttribuerModifier == "attribuer") {
+                if (AjouterNote($note, $utilisateur[0]->idUtilisateur, $idJeu)) {
+                    header('Location: detailJeu.php');
+                    exit;
+                } else {
+                    echo '<script>alert(" Une erreur s\'est produite. Votre note n\'a pas pu être attribuer.")</script>';
+                }
+            } else if ($nomAttribuerModifier == "modifier") {
+                if (modifierNote($tableauNoteUtilisateur[0]->idNotation, $note)) {
+                    header('Location: detailJeu.php');
+                    exit;
+                } else {
+                    echo '<script>alert(" Une erreur s\'est produite. Votre note n\'a pas pu être modifier.")</script>';
+                }
+            }
+        }
     }
-
-    $donneesJeu = RecupereJeuVideoParId($idJeu);
-    if ($donneesJeu === false) {
-        echo "Les casquettes ne peuvent être affichées. Une erreur s'est produite.";
-        exit;
-    }
-
     ?>
 
     <header>
@@ -113,7 +164,10 @@
                             <h2>Video game club</h2>
                         </a></li>
                     <li class="nav-item"><a class="nav-link" href="./index.php">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./editerJeu.php">Éditer un jeu vidéo</a></li>
+                    <?php if ($utilisateur) {
+                        echo "<li class=\"nav-item\"><a class=\"nav-link\" href=\"./editerJeu.php\">Éditer un jeu vidéo</a></li>";
+                    }
+                    ?>
                 </ul>
                 <div class="card d-flex flex-column align-items-center">
                     <div class="card-body">
@@ -128,17 +182,33 @@
         </nav>
 
     </header>
+    <?php if ($utilisateur) { ?>
+        <aside>
+            <form action="" method="post">
+                <label for="commentaire" style="color:<?= $erreurCommentaire; ?>">Poster un commentaire ? : </label><br>
+                <textarea name="commentaire" cols="30" rows="10"></textarea>
+                <input type="submit" name="poster" value="Poster" value="<?= $commentaire; ?>">
+            </form><br>
+            <form action="" method="post">
+                <label for="note" style="color:<?= $erreurNote; ?>">La note selon vous ? : </label><br>
+                <input type="number" name="note" min="0" max="10" value="<?= $noteUtilisateur ?>">
+                <input type="submit" name="<?= $nomAttribuerModifier ?>" value="<?= $boutonNoteTexte ?>">
+            </form><br>
+            <p>Les commentaires:</p>
+            <?php
+            foreach ($listeCommentaire as $commentaire) {
+                echo "<div class=\"card\">";
+                echo "<div class=\"container\">";
+                echo "<p>Date et heure: $commentaire->dateCommentaire</p>";
+                echo "<p>Par: $commentaire->pseudoUtilisateur</p>";
+                echo "<p>$commentaire->commentaire</p>";
+                echo "</div></div>";
+            }
+            ?>
+        </aside>
+    <?php } ?>
     <main>
-        <form action="" method="post">
-            <label for="commentaire" style="color:<?= $erreurCommentaire; ?>">Poster un commentaire ? : </label><br>
-            <textarea name="commentaire" id="" cols="30" rows="10"></textarea>
-            <input type="submit" name="poster" value="Poster" value="<?= $commentaire; ?>">
-        </form><br>
-        <form action="" method="post">
-            <label for="note" style="color:<?= $erreurNote; ?>">La note selon vous ? : </label><br>
-            <input type="number" name="note" min="0" max="10" value="<?= $note; ?>">
-            <input type="submit" name="attribuer" value="Attribuer une note">
-        </form><br>
+
         <?php
         foreach ($donneesJeu as $jeu) {
             echo "<div class=\"card\">";
@@ -154,14 +224,14 @@
             }
             if ($jeu->version != null) {
                 echo "<p>Version: $jeu->version</p>";
-            } 
+            }
             echo "<p>Description: $jeu->description</p>";
             echo "<p> Genres: $jeu->genre</p>";
             echo "<p> Âge PEGI: $jeu->trancheAge</p>";
             echo "<p> Contenu sensible:$jeu->contenuSensible</p>";
             echo "<p>Plateformes: $jeu->plateforme</p> ";
             echo "<p>Date de sortie: $jeu->dateSortie</p>";
-            echo "<p>Note: $jeu->note</p>";
+            echo "<p>Note: $note</p>";
             echo "</div></div>";
         }
         ?>

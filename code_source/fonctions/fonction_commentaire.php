@@ -17,7 +17,7 @@ require_once './classe/commentaire.php';
  * @return array|bool Un tableau des ECommentaire
  *                    False si une erreur
  */
-function RecupereCommentaireJeu($idJeuVideo)
+function RecupereCommentaireJeuParId($idJeuVideo)
 {
     $arr = array();
 
@@ -25,7 +25,8 @@ function RecupereCommentaireJeu($idJeuVideo)
     `utilisateur`.`pseudo`
     FROM `commentaire`
     JOIN `utilisateur` ON `commentaire`.`idUtilisateur` = `utilisateur`.`idUtilisateur`
-    WHERE `commentaire`.`idJeuVideo` = ij";
+    WHERE `commentaire`.`idJeuVideo` = :ij
+    ORDER BY `commentaire`.`dateCommentaire` DESC LIMIT 20;";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     try {
         $statement->execute(array(':ij' => $idJeuVideo));
@@ -40,8 +41,7 @@ function RecupereCommentaireJeu($idJeuVideo)
             intval($row['idCommentaire']),
             $row['commentaire'],
             $row['dateCommentaire'],
-            $row['idUtilisateur'],
-            $row['idJeuVideo']
+            $row['pseudo']
 
         );
         // On place l'objet ECommentaire créé dans le tableau
@@ -51,7 +51,6 @@ function RecupereCommentaireJeu($idJeuVideo)
     // Done
     return $arr;
 }
-
 
 
 /**
