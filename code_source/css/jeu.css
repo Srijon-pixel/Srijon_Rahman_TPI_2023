@@ -6,6 +6,7 @@
     background-color: white;
     border-radius: 5px;
     margin: 1%;
+    display: inline-block;
 }
 
 .card:hover {
@@ -22,18 +23,16 @@ img {
     height: auto;
 }
 
-main {
-    display: flex;
-    flex-direction: row;
-}
 
-aside{
+
+aside {
     width: 20vw;
     min-width: 5rem;
+
 }
 
-.main{
-    width: 80vw; 
+.main {
+    width: 80vw;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     grid-gap: 2.5rem;

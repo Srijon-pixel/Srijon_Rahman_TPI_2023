@@ -6,8 +6,8 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
  */
-require_once './bd/base_de_donnee.php';
-require_once './classe/utilisateur.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/utilisateur.php';
 
 
 
@@ -30,22 +30,7 @@ function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 	return true;
 }
 
-/** 
- * Supprime définitivement l'utilisateur de la base de donnée 
- * @param int $idUtilisateur identifiant unique de l'utilisateur
- */
-function SupprimerUtilisateur($idUtilisateur)
-{
-	$sql = "DELETE FROM `utilisateur` WHERE `utilisateur`.`idUtilisateur` = :i";
-	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-	try {
-		$statement->execute(array(":i" => $idUtilisateur));
-	} catch (PDOException $e) {
-		return false;
-	}
-	// Fini
-	return true;
-}
+
 
 /**
  * Modifie les données de l'utilisateur dans la base de donnée

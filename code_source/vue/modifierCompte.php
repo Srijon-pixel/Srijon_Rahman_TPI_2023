@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="../css/base.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <title>Modifier le profil</title>
 </head>
@@ -22,8 +22,8 @@
     <?php
 
     //Permet d'utiliser les fonctions du fichier 
-    require_once './fonctions/fonction_utilisateur.php';
-    require_once './fonctions/fonction_session.php';
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
 
     if (!DebutSession()) {
@@ -55,7 +55,7 @@
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
-        $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+        $boutonParametre = '<button class="btn btn-link"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     } else {
         // Pas connecté, donc redirection à la page de connection
         header('Location: identification.php');

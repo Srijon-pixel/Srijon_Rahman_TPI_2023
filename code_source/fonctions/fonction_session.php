@@ -7,8 +7,8 @@
  * Détail: Regroupe toutes les fonctionnalités pour les seesions d'utilisateurs du sites
  */
 
-require_once './fonctions/fonction_utilisateur.php';
-require_once './fonctions/fonction_jeuVideo.php';
+ require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
+ require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_jeuVideo.php';
 
 /**
  * @var string la clé utilisé pour identifier l'utilisateur par sa session

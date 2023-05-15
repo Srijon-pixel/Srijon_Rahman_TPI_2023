@@ -303,3 +303,48 @@ Pour afficher les tranche d'âge dans le menu déroulant de la page d'édition d
 
 ## Bilan de la journée
 Auhourd'hui j'ai réussi à réglé pas mal de bug et ai pu finir la page détaillé d'un jeu, je dois encore finir les testes dessus. Je n'ai malheuresement pas fini la page d'édition d'un jeu vidéo, dans cette page il me manque le côté administrateur + le fait de proposer pour l'utilisateur standard, sinon j'ai déjà tout les champs et ai commencé le traitement d'information reçu pour proposer. J'ai aussi rendu les case à coché sticky et j'ai rajouté des message d'erreur dans chaque formulaire.
+
+## 15.05.23
+## Objectif:
+    - Finir la page d'édition de jeu vidéo
+    - Continuer le plan de test
+    - Commencer le résumé du TPI 
+
+### 07:36
+J'ai oublié de préciser durant le premier jour mais le fichier base_de_donnee.php (qui permet la connexion entre le site et la base de données) nous avait été donner par notre enseignant monsieur Aigroz durant notre deuxième année.
+
+
+### 07:43
+Dans la page d'édition de jeu vidéo, j'ai besoin de récupérer les identifiants des case coché (exemple avec plateforme: 1=>Action, 4=>Course) mais je ne vois pas comment. Sur le site "https://www.w3schools.com/php/func_array_search.asp", il dit qu'il faudrait utiliser la fonction array_search() qui va chercher la  clé à l'aide de la valeur, je pense utiliser cette fonction et ainsi avoir les clés plus tard, je vais d'abord réglé un souci dans la page détaillé d'un jeu vidéo.
+
+### 08:16
+J'ai réglé problème dans la page détaillé d'un jeu vidéo. Le nombre de personne ayant noter le jeu n'était pas afficher, du coup j'ai décidé d'ajouter un paramètre dans la classe notation qui est le nombre de personne ayant noter un jeu en question. J'ai par conséquent modifier les requêtes SQL de mes fonctions RecupereNoteParIdUtilisateur() et RecupereNoteJeuParId() pour les adapters au code.
+
+### 08:50
+Je me suis cassé la tête pour rien, mon maître m'a tout simplement conseillé de mettre dans la value du formulaire, l'identifiant de la plateforme.
+
+### 10:43
+J'ai un problème. Quand je veux récupérer le contenu d'une image à l'aide de la fonction file_get_contents() et vérifier qu'il a bien été envoyé avec la fonction is_uploaded_file(), le site me répond que ce n'est pas possible, car apparement je récupère pas en tableau. Mais le pire et que dans $_FILES, il n'y a rien alors que j'y ai mis le même nom qui est imageEncode.
+
+### 11:24
+Le maître d'apprentissage m'a expliqué que pour la fonction is_uploaded_file() ne retouner uniquement un tableau et que je retouner uniquement une chaîne de caractère. Cependant je comprend toujours pas comment ai-je fais pour récupéré les valeurs dans le $_FILES.
+
+### 12:56
+J'ai décidé de modifier un peu la fonction AjouterJeuAvecLiasons(). J'ai ajouté dans le try du try catch des boucle for, ainsi pour chaque genres, plateformes ou contenus sensible séléctionné, les requêtes seront re-exécuter. Même chose pour la partie modification des données d'un jeu vidéo.
+
+### 13:24
+J'ai rencontré un autre bug, si je change la note d'un jeu vidéo, la note ne sera pas modifier mais celle d'un autre jeu vidéo, celui juste avant. Je pense que je devrai ajouter une fonction qui retourne l'identifiant de lune note du jeu donné par un utilisateur.
+
+### 13:42
+J'ai réglé le problème en rajoutant une conditiant dans la fonction RecupereNoteParIdUtilisateur(), disant de retourner la note venant de tel jeu et de tel utilisateur.
+
+### 15:05
+J'ai fini les fonctionnalités de pour la pag d'édition de jeu vidéo mais n'ai pas encore finit les testes dessus, je l'ai ferai la prochaine fois, là je dois commencer le résumé du TPI.
+
+### 15:55
+Sur le site "https://www.w3schools.com/sql/func_mysql_current_date.asp" j'ai appris que pour récupéré la date d'aujourd'hui, je devais utilisé la fonction CURRENT_DATE();
+
+## Bilan de la journée
+J'ai terminai la page d'édition de jeu vidéo, il me reste plus qu'a testé tout le site et déboguer en cas de besoin, J'ai malheureusement moins avancer du côté de la documentaion. J'ai continué une toute parti du plan de teste et ai commencé le résumé TPI. J'ai aussi réglé des bugs entre temps
+
+

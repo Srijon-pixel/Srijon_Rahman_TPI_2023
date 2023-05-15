@@ -6,11 +6,11 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les jeux vidéo du sites
  */
-require_once './bd/base_de_donnee.php';
-require_once './classe/jeuVideo.php';
-require_once './classe/genre.php';
-require_once './classe/plateforme.php';
-require_once './classe/pegi.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/jeuVideo.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/genre.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/plateforme.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/pegi.php';
 
 
 
@@ -43,9 +43,9 @@ function RecupereToutLesJeuxVideo()
 	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
     JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
 
-	WHERE `jeuVideo`.`proposition` = 0
+	WHERE `jeuVideo`.`proposition` = 0 AND `jeuVideo`.`datePublication` = CURRENT_DATE()
     GROUP BY `jeuvideo`.`idJeuVideo`
-	ORDER BY `jeuVideo`.`dateSortie` DESC LIMIT 20;";
+	ORDER BY `jeuVideo`.`datePublication` DESC LIMIT 20;";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute();
@@ -143,6 +143,70 @@ function RecupereJeuVideoParId($idJeuVideo)
 
 
 /**
+ * Récupère le jeu vidéo à l'aide de son identifiant de la base de donnée
+ *
+ * @return array|bool Un tableau des EJeuVideo
+ *                    False si une erreur
+ */
+function RecupereJeuVideoProposer()
+{
+	$arr = array();
+
+	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
+	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
+	 `jeuVideo`.`proposition`,
+
+	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
+	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
+	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
+    FROM `jeuVideo` 
+    
+    JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
+    JOIN `genre` ON `liaison_genre_jeu`.`idGenre` = `genre`.`idGenre` 
+    
+    JOIN `liaison_plateforme_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_plateforme_jeu`.`idJeuVideo`
+    JOIN `plateforme` ON `liaison_plateforme_jeu`.`idPLateforme` = `plateforme`.`idPLateforme` 
+    
+	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
+    JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
+
+    WHERE `jeuVideo`.`proposition` = 1";
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute();
+	} catch (PDOException $e) {
+		return false;
+	}
+	// On parcoure les enregistrements 
+	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		// On crée l'objet EJeuVideo en l'initialisant avec les données provenant
+		// de la base de données
+		$c = new EJeuVideo(
+			intval($row['idJeuVideo']),
+			$row['titre'],
+			$row['version'],
+			$row['dateSortie'],
+			$row['datePublication'],
+			$row['imageEncode'],
+			$row['description'],
+			$row['proposition'],
+			$row['genres'],
+			$row['plateformes'],
+			$row['trancheAge'],
+			$row['contenu sensible']
+
+		);
+		// On place l'objet EJeuVideo créé dans le tableau
+		array_push($arr, $c);
+	}
+
+	// Done
+	return $arr;
+}
+
+
+
+/**
  * Insère l'utilisateur dans la base de donnée
  *
  * @return int|false Retourne l'identifiant du dernier jeu ajouté, sinon false 
@@ -151,20 +215,20 @@ function AjouterJeu(
 	$titre,
 	$version,
 	$dateSortie,
-	$datePublication,
 	$imageEncode,
+	$imageType,
 	$description,
-	$proposition
+	$trancheAge
 ) {
 	$sql = "INSERT INTO `jeuVideo` (`titre`, `version`,`dateSortie`,`datePublication`,
-	`imageEncode`,`description`,`proposition`,`idPegi`,`idGenre`,`idPlateforme`) 
-	VALUES(:t,:v,:ds,:dp,ie,:d,:p,:pe,:ig,:pl)";
+	`imageEncode`,`description`,`trancheAge`,`proposition`) 
+	VALUES(:t,:v,:ds,null,:ie,:d,:ta,1)";
+	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageEncode);
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(
 			":t" => $titre, ":v" => $version, ":ds" => $dateSortie,
-			":dp" => $datePublication, ":ie" => $imageEncode,
-			":d" => $description, ":p" => $proposition
+			":ie" => $imageEncode, ":d" => $description, ":ta" => $trancheAge
 		));
 	} catch (PDOException $e) {
 		return false;
@@ -181,35 +245,38 @@ function AjouterJeu(
  */
 function AjouterJeuAvecLiaisons(
 	$idJeuVideo,
-	$idPegi,
-	$idGenre,
-	$idPlateforme
+	$tableauIdPegi,
+	$tableauIdGenre,
+	$tableauIdPlateforme
 ) {
 	$sqlPegi = "INSERT INTO `liaison_pegi_jeu` (`idJeuVideo`,`idPegi`) 
-	VALUES(:ij,:pe)";
+	VALUES(:ij,:ipe)";
 	$sqlGenre = "INSERT INTO `liaison_genre_jeu` (`idJeuVideo`,`idGenre`) 
 	VALUES(:ij,:ig)";
-	$sqlPlateforme = "INSERT INTO `liaison_genre_plateforme` (`idJeuVideo`,`idPlateforme`) 
-	VALUES(:ij,:pl)";
+	$sqlPlateforme = "INSERT INTO `liaison_plateforme_jeu` (`idJeuVideo`,`idPlateforme`) 
+	VALUES(:ij,:ipl)";
+
 
 	$statementPegi = EBaseDonnee::prepare($sqlPegi, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$statementGenre = EBaseDonnee::prepare($sqlGenre, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$statementPlateforme = EBaseDonnee::prepare($sqlPlateforme, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 
 	try {
-		$statementPegi->execute(array(
-			":ij" => $idJeuVideo, ":pe" => $idPegi
-		));
-		$statementGenre->execute(array(
-			":ij" => $idJeuVideo, ":ig" => $idGenre
-		));
-		$statementPlateforme->execute(array(
-			":ij" => $idJeuVideo, ":pl" => $idPlateforme
-		));
+		for ($i = 0; $i < count($tableauIdPegi); $i++) {
+			$contenuSensible = intval($tableauIdPegi[$i]);
+			$statementPegi->execute(array(":ij" => $idJeuVideo, ":ipe" => $contenuSensible));
+		}
+		for ($i = 0; $i < count($tableauIdGenre); $i++) {
+			$nomGenre = intval($tableauIdGenre[$i]);
+			$statementGenre->execute(array(":ij" => $idJeuVideo, ":ig" => $nomGenre));
+		}
+		for ($i = 0; $i < count($tableauIdPlateforme); $i++) {
+			$nomPlateforme = intval($tableauIdPlateforme[$i]);
+			$statementPlateforme->execute(array(":ij" => $idJeuVideo, ":ipl" => $nomPlateforme));
+		}
 	} catch (PDOException $e) {
 		return false;
 	}
-
 	return true;
 }
 
@@ -242,24 +309,25 @@ function ModifierJeu(
 	$dateSortie,
 	$datePublication,
 	$imageEncode,
+	$imageType,
 	$description,
-	$proposition
+	$trancheAge
 ) {
 	$sql = "UPDATE `jeuVideo`
 	SET `jeuVideo`.`titre` = :t, `jeuVideo`.`version` = :v, `jeuVideo`.`dateSortie` = :ds, 
 	`jeuVideo`.`datePublication` = :dp, `jeuVideo`.`imageEncode` = :ie, 
-	`jeuVideo`.`description` = :d, `jeuVideo`.`proposition` = :p WHERE `jeuVideo`.`idJeuVideo` = :ij";
+	`jeuVideo`.`description` = :d, `jeuVideo`.`trancheAge` = :ta, `jeuVideo`.`proposition` = 0 WHERE `jeuVideo`.`idJeuVideo` = :ij";
+	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageEncode);
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(
 			":ij" => $idJeuVideo, ":t" => $titre, ":v" => $version, ":ds" => $dateSortie,
 			":dp" => $datePublication, ":ie" => $imageEncode,
-			":d" => $description, ":p" => $proposition
+			":d" => $description, ":ta" => $trancheAge
 		));
 	} catch (PDOException $e) {
 		return false;
 	}
-	// Done
 	return true;
 }
 
@@ -270,9 +338,9 @@ function ModifierJeu(
  */
 function ModifierJeuAvecLiaisons(
 	$idJeuVideo,
-	$idPegi,
-	$idGenre,
-	$idPlateforme
+	$tableauIdPegi,
+	$tableauIdGenre,
+	$tableauIdPlateforme
 ) {
 	$sqlPegi = "UPDATE `liaison_pegi_jeu`
 	SET `jeuVideo`.`idPegi` = :pe, WHERE `jeuVideo`.`idJeuVideo` = :ij";
@@ -285,19 +353,37 @@ function ModifierJeuAvecLiaisons(
 	$statementGenre = EBaseDonnee::prepare($sqlGenre, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	$statementPlateforme = EBaseDonnee::prepare($sqlPlateforme, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
-		$statementPegi->execute(array(
-			":ij" => $idJeuVideo, ":pe" => $idPegi
-		));
-		$statementGenre->execute(array(
-			":ij" => $idJeuVideo, ":ig" => $idGenre
-		));
-		$statementPlateforme->execute(array(
-			":ij" => $idJeuVideo, ":pl" => $idPlateforme
-		));
+		for ($i = 0; $i < count($tableauIdPegi); $i++) {
+			$contenuSensible = intval($tableauIdPegi[$i]);
+			$statementPegi->execute(array(":ij" => $idJeuVideo, ":ipe" => $contenuSensible));
+		}
+		for ($i = 0; $i < count($tableauIdGenre); $i++) {
+			$nomGenre = intval($tableauIdGenre[$i]);
+			$statementGenre->execute(array(":ij" => $idJeuVideo, ":ig" => $nomGenre));
+		}
+		for ($i = 0; $i < count($tableauIdPlateforme); $i++) {
+			$nomPlateforme = intval($tableauIdPlateforme[$i]);
+			$statementPlateforme->execute(array(":ij" => $idJeuVideo, ":ipl" => $nomPlateforme));
+		}
 	} catch (PDOException $e) {
 		return false;
 	}
 	// Done
+	return true;
+}
+
+function ValiderJeu($idJeuVideo)
+{
+	$sql = "UPDATE `jeuVideo`
+	SET `jeuVideo`.`proposition` = 0 WHERE `jeuVideo`.`idJeuVideo` = :ij";
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute(array(
+			":ij" => $idJeuVideo
+		));
+	} catch (PDOException $e) {
+		return false;
+	}
 	return true;
 }
 
@@ -335,7 +421,7 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 	AND `jeuvideo`.`trancheAge` <= $ageMax AND `jeuvideo`.`trancheAge` >= $ageMin AND `jeuVideo`.`proposition` = 0
 	
 	GROUP BY `jeuvideo`.`idJeuVideo`
-	ORDER BY `jeuVideo`.`dateSortie` DESC LIMIT 20;";
+	ORDER BY `jeuVideo`.`datePublication` DESC LIMIT 20;";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute();

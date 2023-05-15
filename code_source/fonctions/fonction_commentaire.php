@@ -6,8 +6,8 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les commentaires sur les jeux vidéo du sites
  */
-require_once './bd/base_de_donnee.php';
-require_once './classe/commentaire.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/commentaire.php';
 
 
 
@@ -76,22 +76,6 @@ function AjouterCommentaire(
     return true;
 }
 
-/** 
- * Supprime définitivement le commentaire de la base de donnée 
- * @param int $idCommentaire identifiant du commentaire
- */
-function SupprimerCommentaire($idCommentaire)
-{
-    $sql = "DELETE FROM `commentaire` WHERE `commentaire`.`idCommentaire` = :ic";
-    $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    try {
-        $statement->execute(array(":ic" => $idCommentaire));
-    } catch (PDOException $e) {
-        return false;
-    }
-    // Fini
-    return true;
-}
 
 /**
  * Modifie les données du commentaire dans la base de donnée

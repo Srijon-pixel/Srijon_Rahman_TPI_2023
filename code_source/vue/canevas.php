@@ -3,36 +3,29 @@
 * Auteur: Mofassel Haque Srijon Rahman
 * Date: 27.04.2023
 * Projet: TPI video game club
-* Détail: Page affichant un formulaire pour l'utilisateur afin de se connecter si ce dernier possède déjà un compte enceint du site
+* Détail: Modèle de vue pour les autres pages du site
 */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/base.css">
+    <link rel="stylesheet" href="../css/base.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <title>Identification</title>
+    <title>Canevas</title>
 </head>
 
 <body>
     <?php
-    session_start();
+
     //Permet d'utiliser les fonctions du fichier 
-    require_once './fonctions/fonction_utilisateur.php';
-    require_once './fonctions/fonction_session.php';
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
+    require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
-    //Variables
-    const COULEUR_MESSAGE_ERREUR = "red";
-
-    $email = "";
-    $motDePasse = "";
-
-    $erreurEmail = "";
-    $erreurMotDePasse = "";
 
     $utilisateur = RecupereUtilisateurParSession();
     $nomUtilisateur = 'invité';
@@ -40,12 +33,13 @@
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
+    
 
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
-        $boutonParametre = '<button class="btn"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
+        $boutonParametre = '<button class="btn btn-link"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     }
 
     if (isset($_POST[$nomConnexionDeconnexion])) {
@@ -58,37 +52,6 @@
             exit;
         }
     }
-
-
-    if (isset($_POST['identification'])) {
-        
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-        $email = strip_tags($email);
-        $email = addslashes($email);
-        if ($email == "") {
-            $erreurEmail = COULEUR_MESSAGE_ERREUR;
-        }
-
-        $motDePasse = filter_input(INPUT_POST, 'motDePasse');
-        $motDePasse = antiInjectionXSS($motDePasse);
-        if ($motDePasse == "") {
-            $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
-        }
-
-        if ($erreurMotDePasse != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
-            if (VerifieUtilisateurExiste($email, $motDePasse)) {
-                $_SESSION['idUtilisateur'] = RecupereUtilisateurParEmail($email);
-                header("location: profil.php");
-                exit();
-            }else{
-            echo '<script>alert("Les valeurs ne correspondent pas")</script>';
-                
-            }
-        } else {
-            echo '<script>alert("Il vous manque des valeurs")</script>';
-        }
-    }
-
     ?>
 
     <header>
@@ -119,18 +82,6 @@
     </header>
     <main>
 
-        <form action="" method="POST">
-
-            <label for="email" style="color:<?= $erreurEmail; ?>">Email:</label><br>
-            <input type="email" name="email" value="<?= $email; ?>"><br>
-
-            <label for="motDePasse" style="color:<?= $erreurMotDePasse; ?>">Mot de passe : </label><br>
-            <input type="password" name="motDePasse" value="<?= $motDePasse; ?>"><br>
-
-            <input type="submit" name="identification" value="S'identifier" class="btn btn-primary"><br>
-            <a href="./inscription.php">Pas de compte ?</a>
-
-        </form>
 
     </main>
     <footer>

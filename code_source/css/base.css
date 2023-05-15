@@ -7,14 +7,20 @@
 
 
 footer {
-    color: white;
+    color: rgb(255, 255, 255);
     background-color: rgba(49, 49, 49, 0.801);
     position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
+
 }
-a{
-    color: black;
+
+main {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 50px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
