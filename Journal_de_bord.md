@@ -348,3 +348,27 @@ Sur le site "https://www.w3schools.com/sql/func_mysql_current_date.asp" j'ai app
 J'ai terminai la page d'édition de jeu vidéo, il me reste plus qu'a testé tout le site et déboguer en cas de besoin, J'ai malheureusement moins avancer du côté de la documentaion. J'ai continué une toute parti du plan de teste et ai commencé le résumé TPI. J'ai aussi réglé des bugs entre temps
 
 
+## 16.05.23
+## Objectif:
+    - Finir la situation de départ du résumé du TPI.
+    - Faire une partie le manuel d'utilisateur
+    - Continuer l'analyse organique.
+    - Continuer les testes et débogages.
+
+### 08:03
+Pour la documentation j'ai ajouté à logo représentant mon site web à l'aide du site "https://app.logo.com".
+
+### 14:12
+Petit bug résolu au niveau de l'affichage des jeux en fonction de la date de publication, j'ai oublié de préciser que les jeux doivent s'afficher si leurs date de publication est arrivé et qu'il pouvait rester afficher même si la date courrante n'est pas la même que leur date de publication.
+
+### 14:34
+Autre petite erreur résolu dans la page d'accueil au niveau de l'affichage du nombre de jeux vidéo dans la base de données, je me suis trompé dans la manière de l'afficher, je vais à la place crée une nouvelle fonction pour.
+
+### 15:15
+J'ai oublié d'ajouter un formulaire pour l'adminitrateur dans la page d'édition de jeu pour le valider ou le modifier, et aussi oublié l'utilisation de filesize trouvé à l'aide du site "https://www.php.net/manual/fr/function.filesize.php", cette fonction retourne la taille d'un fichier.
+
+## Bilan de la journée
+J'ai terminé la première partie du résumé du TPI, commencé le manuel d'utilisateur, continué l'analyse organique, ai presque fini les tests et résolu quelque bugs lors du débogage comme l'affichage du nombre de jeu dans la base de données.
+
+
+
