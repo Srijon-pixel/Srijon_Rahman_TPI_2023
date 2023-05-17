@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page affichant un formulaire pour l'utilisateur afin de se connecter si ce dernier possède déjà un compte enceint du site
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page affichant un formulaire pour l'utilisateur afin de se connecter si ce dernier possède déjà un compte au sein du site
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -21,26 +22,28 @@
 <body>
     <?php
     session_start();
-    //Permet d'utiliser les fonctions du fichier 
+    //Permet d'utiliser les fonctions des fichiers ci-dessous 
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
-    //Variables
+    //Constantes
     const COULEUR_MESSAGE_ERREUR = "red";
 
+    //Variables
     $email = "";
     $motDePasse = "";
 
     $erreurEmail = "";
     $erreurMotDePasse = "";
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -59,9 +62,10 @@
         }
     }
 
-
+    //L'utilisateur veut se connecté
     if (isset($_POST['identification'])) {
-        
+
+        //Filtrage + Traitement des données
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $email = strip_tags($email);
         $email = addslashes($email);
@@ -74,15 +78,15 @@
         if ($motDePasse == "") {
             $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
-
+        //S'il n'y a pas eu d'erreur durant le filtrage et le traitement des données et qu'ils
+        //n'existent pas ailleurs, alors on l'envoie dans la page profil
         if ($erreurMotDePasse != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
             if (VerifieUtilisateurExiste($email, $motDePasse)) {
                 $_SESSION['idUtilisateur'] = RecupereUtilisateurParEmail($email);
                 header("location: profil.php");
                 exit();
-            }else{
-            echo '<script>alert("Les valeurs ne correspondent pas")</script>';
-                
+            } else {
+                echo '<script>alert("Les valeurs ne correspondent pas")</script>';
             }
         } else {
             echo '<script>alert("Il vous manque des valeurs")</script>';

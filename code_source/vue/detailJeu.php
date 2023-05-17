@@ -38,9 +38,11 @@
         header('Location: /index.php');
         exit;
     }
-    //Variables
+
+    //Constante
     const COULEUR_MESSAGE_ERREUR = "red";
 
+    //Variables
     $idJeu = $_SESSION['idJeu'];
     $note = 0;
     $commentaire = "";
@@ -52,13 +54,14 @@
     $nomAttribuerModifier = "attribuer";
     $boutonNoteTexte = "Attribuer une note";
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -75,6 +78,7 @@
             $noteUtilisateur = 0;
         }
     }
+
 
     if (isset($_POST[$nomConnexionDeconnexion])) {
         if ($nomConnexionDeconnexion == "connexion") {
@@ -130,6 +134,7 @@
     //Ajout d'un commentaire sur un jeu vidéo
     if (isset($_POST['poster'])) {
 
+        //Filtrage des données
         $dateCommentaire = date("Y-m-d, h:i:s");
         $commentaire = filter_input(INPUT_POST, "commentaire");
         $commentaire = antiInjectionXSS($commentaire);
@@ -138,6 +143,7 @@
             echo '<script>alert("Veuillez ajouter votre commentaire correctement s\'il vous plaît")</script>';
             $erreurCommentaire = COULEUR_MESSAGE_ERREUR;
         } else {
+            //Ajoute s'il n'y a pas eu d'erreur
             if (AjouterCommentaire($commentaire, $dateCommentaire, $utilisateur[0]->idUtilisateur, $idJeu)) {
                 header('Location: detailJeu.php');
                 exit;
@@ -148,15 +154,17 @@
     }
 
 
-    //Traitement d'ajout ou de modification de  la note d'un jeu vidéo
+    //Traitement d'ajout ou de modification de la note d'un jeu vidéo
     if (isset($_POST[$nomAttribuerModifier])) {
+        //Filtrage des données
         $note = filter_input(INPUT_POST, "note", FILTER_SANITIZE_NUMBER_INT);
         $note  = antiInjectionXSS($note);
-        if ($note <= -1 || preg_match('/[a-zA-Z]/', $note)) {
+        if ($note <= -1 || preg_match('/[a-zA-Z]/', $note) || $note > 10) {
             $erreurNote = COULEUR_MESSAGE_ERREUR;
             echo '<script>alert("Veuillez ajouter votre note correctement s\'il vous plaît.")</script>';
         } else {
             if ($nomAttribuerModifier == "attribuer") {
+                //S'il n'y a pas eu d'erreur, alors on ajoute la note
                 if (AjouterNote($note, $utilisateur[0]->idUtilisateur, $idJeu)) {
                     header('Location: detailJeu.php');
                     exit;
@@ -164,7 +172,8 @@
                     echo '<script>alert(" Une erreur s\'est produite. Votre note n\'a pas pu être attribuer.")</script>';
                 }
             } else if ($nomAttribuerModifier == "modifier") {
-                if (modifierNote($tableauNoteUtilisateur[0]->idNotation, $note)) {
+                //S'il n'y a pas eu d'erreur, alors on modifie la note
+                if (ModifierNote($tableauNoteUtilisateur[0]->idNotation, $note)) {
                     header('Location: detailJeu.php');
                     exit;
                 } else {
@@ -267,6 +276,7 @@
         Contact : srijon.rhmn@eduge.ch
     </footer>
 
+    
 </body>
 
 </html>

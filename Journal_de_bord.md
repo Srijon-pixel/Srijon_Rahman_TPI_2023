@@ -370,5 +370,17 @@ J'ai oublié d'ajouter un formulaire pour l'adminitrateur dans la page d'éditio
 ## Bilan de la journée
 J'ai terminé la première partie du résumé du TPI, commencé le manuel d'utilisateur, continué l'analyse organique, ai presque fini les tests et résolu quelque bugs lors du débogage comme l'affichage du nombre de jeu dans la base de données.
 
+## 17.05.23
+## Objectif:
+    - Terminé les tests et débogages
+    - Terminé la documentation technique
+    - Terminé le manuel d'utilisateur,
+    - Terminé le résumé du TPI.
 
 
+
+### 12:40
+Visite de l'expert monsieur Poulin, il m'a expliqué ce que si je n'ai pas pu faire des tests dans certaine page, je devais le mentionné et l'expliqué dans l'email au moment où je rend les document PDF aux experts.
+
+## Bilan de la journée
+Fin du TPI je n'ai au final pas pu finir le site web et n'ai pas pu ajouter plus de texte pour la documentation. J'ai au moins pu faire la documentation de mon code.

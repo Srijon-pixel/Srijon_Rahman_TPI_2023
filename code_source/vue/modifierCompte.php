@@ -44,13 +44,14 @@
     $erreurPseudo = "";
     $erreurEmail = "";
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -73,7 +74,9 @@
         }
     }
 
+    //Si l'utilisateur veut modifier ses données
     if (isset($_POST['modifierCompte'])) {
+        //Filtrage + Traitements des données
         $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
@@ -89,7 +92,7 @@
             $erreurPrenom = COULEUR_MESSAGE_ERREUR;
         }
 
-        modifierEmailPseudo($idUtilisateur);
+        ModifierEmailPseudo($idUtilisateur);//Supprime l'email et le pseudo de l'utilisateur
         $pseudo = filter_input(INPUT_POST, 'pseudo');
         $pseudo = antiInjectionXSS($pseudo);
         if ($pseudo == "" || preg_match('/[a-zA-Z]/', $pseudo) == false) {
@@ -111,9 +114,11 @@
             $erreurEmail = COULEUR_MESSAGE_ERREUR;
         }
 
+        //Si il n'y a pas eu de problème dans le filtrage et le traitement de données,
+        // alors on modifie les données de l'utilisateur
         if ($idUtilisateur >= 1 && $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR 
         && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR) {
-            if (modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)) {
+            if (ModifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)) {
                 header('Location: profil.php');
                 exit;
             }
@@ -158,7 +163,10 @@
     <main>
 
         <form action="" method="POST">
-            <?php foreach ($donneesUtilisateur as $utilisateur) {
+            
+            <?php
+            //Parcours le tableau comportant les donnée de l'utilisateur connecté et les affiches
+            foreach ($donneesUtilisateur as $utilisateur) {
 
                 echo "<label for=\"nom\" style=\"" . $erreurNom . "\">Votre nom :</label><br>";
                 echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\"><br>";

@@ -6,7 +6,8 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les utilisateurs du sites
  */
-require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php'; // connection à la base de données
+//La classe nécesssaire pour afficher, ajouter ou modifier les données.
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/utilisateur.php';
 
 
@@ -14,7 +15,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/utilisateur.php';
 
 /**
  * Insère l'utilisateur dans la base de donnée
- *
+ * @param string $nom le nom de l'utilisateur
+ * @param string $prenom le prenom de l'utilisateur
+ * @param string $pseudo le pseudo de l'utilisateur
+ * @param string $email l'email de l'utilisateur
+ * @param string $motDePasse le mot de passe de l'utilisateur
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
 function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
@@ -34,10 +39,14 @@ function AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)
 
 /**
  * Modifie les données de l'utilisateur dans la base de donnée
- *
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
+ * @param string $nom le nom de l'utilisateur
+ * @param string $prenom le prenom de l'utilisateur
+ * @param string $pseudo le pseudo de l'utilisateur
+ * @param string $email l'email de l'utilisateur
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
+function ModifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 {
 	$sql = "UPDATE `utilisateur` SET `utilisateur`.`nom` = :n, `utilisateur`.`prenom` = :pr, 
 	`utilisateur`.`pseudo` = :ps, `utilisateur`.`email` = :e WHERE `utilisateur`.`idUtilisateur` = :i";
@@ -53,10 +62,11 @@ function modifierUtilisateur($idUtilisateur, $nom, $prenom, $pseudo, $email)
 
 /**
  * Modifie le mot de passe de l'utilisateur dans la base de donnée
- *
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
+ * @param string $motDePasse le mot de passe de l'utilisateur
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifierMotDePasse($idUtilisateur, $motDePasse)
+function ModifierMotDePasse($idUtilisateur, $motDePasse)
 {
 	$sql = "UPDATE `utilisateur` SET `utilisateur`.`motDePasse` = :m WHERE `utilisateur`.`idUtilisateur` = :i";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -70,11 +80,11 @@ function modifierMotDePasse($idUtilisateur, $motDePasse)
 }
 
 /**
- * Modifie le mot de passe de l'utilisateur dans la base de donnée
- *
+ * Supprime le pseudo et l'email de l'utilisateur dans la base de donnée à l'adie de son identifiant
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifierEmailPseudo($idUtilisateur)
+function ModifierEmailPseudo($idUtilisateur)
 {
 	$sql = "UPDATE `utilisateur` SET `utilisateur`.`pseudo` = \"\", `utilisateur`.`email` = \"\"
 	 WHERE `utilisateur`.`idUtilisateur` = :i";
@@ -88,12 +98,11 @@ function modifierEmailPseudo($idUtilisateur)
 	return true;
 }
 /**
- * Vérifie si le mot de passe répond aux critères pour la syntax
- *
+ * Vérifie si le mot de passe répond aux critères pour la syntax d'un mot de passe
  * @param string $motDePasse le mot de passe de l'utilisateur
  * @return bool true si le mot de passe répond à tous les critères, sinon false 
  */
-function motDePasseSyntax($motDePasse)
+function MotDePasseSyntax($motDePasse)
 {
 	$majuscule = preg_match('@[A-Z]@', $motDePasse);
 	$minuscule = preg_match('@[a-z]@', $motDePasse);
@@ -106,7 +115,7 @@ function motDePasseSyntax($motDePasse)
 }
 
 /**
- * Récupère toutes les données d'un utilisateur de la base de donnée
+ * Récupère toutes les données d'un utilisateur de la base de donnée à l'aide de son identifiant
  *
  * @param integer $idUtilisateur L'identifiant de l'utilisateur
  * @return array|bool Un tableau des EUtilisateur
@@ -114,7 +123,7 @@ function motDePasseSyntax($motDePasse)
  */
 function RecuperationDonneeUtilisateur($idUtilisateur)
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
 	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM `utilisateur`
     WHERE utilisateur.idUtilisateur = :i";
@@ -126,6 +135,8 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
 	}
 	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		// On crée l'objet EUtilisateur en l'initialisant avec les données provenant
+        // de la base de données
 		$c = new EUtilisateur(
 			intval($row['idUtilisateur']),
 			$row['nom'],
@@ -136,14 +147,22 @@ function RecuperationDonneeUtilisateur($idUtilisateur)
 			$row['motDePasse']
 
 		);
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
-	return $arr;
+	// On place l'objet EUtilisateur créé dans le tableau
+	return $tableau;
 }
 
+/**
+ * Récupère toutes les données d'un utilisateur de la base de donnée à l'aide de son email
+ *
+ * @param integer $email L'email de l'utilisateur
+ * @return array|bool Un tableau des EUtilisateur
+ *                    False si une erreur
+ */
 function RecuperationDonneeUtilisateurParEmail($email)
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `utilisateur`.`idUtilisateur`, `utilisateur`.`nom`, `utilisateur`.`prenom`, `utilisateur`.`pseudo`, 
 	`utilisateur`.`email`,  `utilisateur`.`statut`, `utilisateur`.`motDePasse` FROM `utilisateur`
     WHERE utilisateur.email = :e";
@@ -155,6 +174,8 @@ function RecuperationDonneeUtilisateurParEmail($email)
 	}
 	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		// On crée l'objet EUtilisateur en l'initialisant avec les données provenant
+        // de la base de données
 		$c = new EUtilisateur(
 			intval($row['idUtilisateur']),
 			$row['nom'],
@@ -165,9 +186,10 @@ function RecuperationDonneeUtilisateurParEmail($email)
 			$row['motDePasse']
 
 		);
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
-	return $arr;
+	// On place l'objet EUtilisateur créé dans le tableau
+	return $tableau;
 }
 
 /**
@@ -189,7 +211,12 @@ function RecupereUtilisateurParEmail($email)
 	return $row['idUtilisateur'];
 }
 
-
+/**
+ * Vérifie si l'email n'existe pas déjà dans la base de donnée
+ *
+ * @param string $email le nouvel email de l'utilisateur
+ * @return array|bool true si la requête a été correctement effectué, sinon false 
+ */
 function VerifieEmailSimilaire($email)
 {
 	$sql = "SELECT `email` FROM `utilisateur`  WHERE `utilisateur`.`email` = :e";
@@ -207,9 +234,9 @@ function VerifieEmailSimilaire($email)
 }
 
 /**
- * 
+ * Vérifie si le pseudo n'existe pas déjà dans la base de donnée
  *
- * @param string $pseudo
+ * @param string $pseudo le nouveau pseudo de l'utilisateur
  * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function VerifiePseudoSimilaire($pseudo)
@@ -248,7 +275,7 @@ function VerifieUtilisateurExiste($emailUtilisateur, $motDePasseUtilisateur)
 	return false;
 }
 /**
- *
+ *	Fait en sorte de ne pas avoir d'injection XSS
  *
  * @param string $chaineCharactere chaîne de caractère récupèré
  * @return string
@@ -260,4 +287,3 @@ function antiInjectionXSS($chaineCharactere)
 	$chaineCharactere = addslashes($chaineCharactere);
 	return $chaineCharactere;
 }
-

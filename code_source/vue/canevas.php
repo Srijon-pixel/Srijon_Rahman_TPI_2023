@@ -22,25 +22,26 @@
 <body>
     <?php
 
-    //Permet d'utiliser les fonctions du fichier 
+    //Permet d'utiliser les fonctions des fichiers ci-dessous  
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession();  //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
     
-
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn btn-link"><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
     }
+
 
     if (isset($_POST[$nomConnexionDeconnexion])) {
         if ($nomConnexionDeconnexion == "connexion") {

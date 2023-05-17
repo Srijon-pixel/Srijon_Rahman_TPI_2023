@@ -6,7 +6,8 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les notes sur les jeux vidéo du sites
  */
-require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php'; // connection à la base de données
+//La classe nécesssaire pour afficher, ajouter ou modifier les données.
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/notation.php';
 
 
@@ -18,7 +19,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/notation.php';
  */
 function RecupereNoteJeuParId($idJeuVideo)
 {
-    $arr = array();
+    $tableau = array();
     $sql = "SELECT ROUND(AVG(`notation`.`note`), 1) AS `Note`, COUNT(`notation`.`idUtilisateur`) AS `nombreNotePersonne`
     FROM `notation` WHERE `notation`.`idJeuVideo` = :ij; ";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -35,22 +36,23 @@ function RecupereNoteJeuParId($idJeuVideo)
             $row['idUtilisateur'] = null,
             $row['idJeuVideo'] = null
         );
-        array_push($arr, $c);
+        array_push($tableau, $c);
     }
 
     // Done
-    return $arr;
+    return $tableau;
 }
 
 /**
- * Récupère la note du jeu vidéo à partir de son identifiant
+ * Récupère la note du jeu vidéo à partir de l'identifiant du jeu et de l'utilisateur l'ayant attribuer
  *
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
  * @param int $idJeuVideo l'identifiant du jeu vidéo
  * @return array|bool true si la requête a été correctement effectué, sinon false 
  */
 function RecupereNoteParIdUtilisateur($idUtilisateur, $idJeuVideo)
 {
-    $arr = array();
+    $tableau = array();
     $sql = "SELECT `notation`.`idNotation`, `notation`.`note`, `notation`.`idUtilisateur`, 
     `notation`.`idJeuVideo`FROM `notation` WHERE `notation`.`idUtilisateur` = :iu AND 
     `notation`.`idJeuVideo` = :ij; ";
@@ -73,16 +75,18 @@ function RecupereNoteParIdUtilisateur($idUtilisateur, $idJeuVideo)
             $row['idJeuVideo']
         );
         // On place l'objet ENotation créé dans le tableau
-        array_push($arr, $c);
+        array_push($tableau, $c);
     }
 
     // Done
-    return $arr;
+    return $tableau;
 }
 
 /**
  * Insère la note du jeu vidéo dans la base de donnée
- *
+ * @param int $note la note du jeu vidéo
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
+ * @param int $idJeuVideo l'identifiant du jeu vidéo
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
 function AjouterNote(
@@ -106,10 +110,11 @@ function AjouterNote(
 
 /**
  * Modifie les données de la note du jeu dans la base de donnée
- *
+ * @param int $idNotation l'identifiant de la note
+ * @param int $note la note du jeu vidéo
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
-function modifierNote(
+function ModifierNote(
     $idNotation,
     $note
 ) {

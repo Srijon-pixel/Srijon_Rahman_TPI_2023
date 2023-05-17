@@ -4,7 +4,7 @@
  * Auteur: Mofassel Haque Srijon Rahman
  * Date: 11.05.2023
  * Projet: TPI video game club
- * Détail: Modèle de vue pour les autres pages du site
+ * Détail: Page permettant à l'utilisateur de proposer un jeu à afficher dans le site et à l'administrateur de valider ou modifier la proposition
  */
 ?>
 <!DOCTYPE html>
@@ -33,16 +33,13 @@
         exit;
     }
 
+    //Constante
     const COULEUR_MESSAGE_ERREUR = "red";
-    /*$idJeuProposer = $_SESSION["idJeuProposer"];
-    if($idJeuProposer == null){
-        echo "bruh";
-    }*/
-    
 
+    //Variables
     $titre = "";
     $version = "";
-    $imageEncode = "";
+    $imageNom = "";
     $description = "";
     $dateSortie = "";
     $datePublication = "";
@@ -54,7 +51,7 @@
 
     $erreurTitre = "";
     $erreurVersion = "";
-    $erreurImageEncode = "";
+    $erreurImageNom = "";
     $erreurDescription = "";
     $erreurDateSortie = "";
     $erreurDatePublication = "";
@@ -63,20 +60,25 @@
     $erreurPlateforme = "";
     $erreurGenre = "";
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    $donneeJeuProposer = RecupereJeuVideoProposer();
+    if ($donneeJeuProposer) {
+        $idJeuProposer = $donneeJeuProposer[0]->idJeuVideo;
+    }
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
         $boutonTexte = 'Déconnexion';
         $boutonParametre = '<button class="btn" btn-link><a href="./profil.php?id=' . $utilisateur[0]->idUtilisateur . '">Compte</a></button>';
-    } else {
+    } else { //Sinon
         // Pas connecté, donc redirection à la page de connection
         header('Location: identification.php');
         exit;
@@ -93,7 +95,7 @@
         }
     }
 
-
+    //Récupération des données des genres, des plateformes et des contenu sensibles
     $registreGenre = RecupereGenre();
     if ($registreGenre === false) {
         echo '<script>alert("Les genres de jeu vidéo ne peuvent être affichées. Une erreur s\'est produite.")</script>';
@@ -109,7 +111,8 @@
 
 
     if (isset($_POST["proposer"])) {
-
+        //Filtarge + Traitement des données
+        $imageNom = $_FILES['imageEncode']['name'];
         $titre = filter_input(INPUT_POST, 'titre');
         $titre = antiInjectionXSS($titre);
         if ($titre == "" || preg_match('/[a-zA-Z]/', $titre) == false) {
@@ -137,12 +140,17 @@
             echo "<script>alert(\"Veuillez cocher au moins une plateforme.\")</script>";
             $erreurPlateforme = COULEUR_MESSAGE_ERREUR;
         }
-        
-        if (!isset($_FILES['imageEncode']) || !is_uploaded_file($_FILES['imageEncode']['tmp_name']) || $_FILES['imageEncode']['tmp_name'] == "") {
-            $erreurImageEncode = COULEUR_MESSAGE_ERREUR;
+
+        //Si l'image existe et qu'il a été téléverser
+        if (
+            !isset($_FILES['imageEncode']) || !is_uploaded_file($_FILES['imageEncode']['tmp_name'])
+            || $_FILES['imageEncode']['tmp_name'] == ""
+        ) {
+            $erreurImageNom = COULEUR_MESSAGE_ERREUR;
             echo "<script>alert(\"Problème de transfert de l'image\")</script>";
-        } else {
-            $imageEncode = $_FILES['imageEncode']['tmp_name'];
+        } else if (filesize($_FILES['imageEncode']['tmp_name']) > 1000000) {
+            $erreurImageNom = COULEUR_MESSAGE_ERREUR;
+            echo "<script>alert(\"Fichier trop volumineux, choisissez un autre\")</script>";
         }
 
         if (isset($_POST['genre'])) {
@@ -172,7 +180,7 @@
             echo '<script>alert("Veuillez écrire la description du jeu.")</script>';
             $erreurDescription = COULEUR_MESSAGE_ERREUR;
         }
-
+        //S'il n'y a pas eu d'erreur alors on ajoute le jeu dans la base de donnée
         if (
             $erreurTitre != COULEUR_MESSAGE_ERREUR && $erreurVersion != COULEUR_MESSAGE_ERREUR
             && $erreurDescription != COULEUR_MESSAGE_ERREUR && $erreurDateSortie != COULEUR_MESSAGE_ERREUR
@@ -198,12 +206,15 @@
                 $_SESSION["idJeuProposer"] = $idJeuVideo;
                 header("location: index.php");
                 exit;
+            } else {
+                echo '<script>alert("Jeu impossible à ajouter. Une erreur s\'est produite.")</script>';
             }
         }
     }
 
     if (isset($_POST["modifier"])) {
-
+        //Filtarge + traitements des données
+        $imageNom = $_FILES['imageEncode']['name'];
         $titre = filter_input(INPUT_POST, 'titre');
         $titre = antiInjectionXSS($titre);
         if ($titre == "" || preg_match('/[a-zA-Z]/', $titre) == false) {
@@ -237,10 +248,17 @@
             echo "<script>alert(\"Veuillez cocher au moins une plateforme.\")</script>";
             $erreurPlateforme = COULEUR_MESSAGE_ERREUR;
         }
-        
-        if (!isset($_FILES['imageEncode']) || !is_uploaded_file($_FILES['imageEncode']['tmp_name'])) {
-            $erreurImageEncode = COULEUR_MESSAGE_ERREUR;
+
+        //Si l'image existe et qu'il a été téléverser
+        if (
+            !isset($_FILES['imageEncode']) || !is_uploaded_file($_FILES['imageEncode']['tmp_name'])
+            || $_FILES['imageEncode']['tmp_name'] == ""
+        ) {
+            $erreurImageNom = COULEUR_MESSAGE_ERREUR;
             echo "<script>alert(\"Problème de transfert de l'image\")</script>";
+        } else if (filesize($_FILES['imageEncode']['tmp_name']) > 1000000) {
+            $erreurImageNom = COULEUR_MESSAGE_ERREUR;
+            echo "<script>alert(\"Fichier trop volumineux, choisissez un autre\")</script>";
         }
 
         if (isset($_POST['genre'])) {
@@ -271,6 +289,8 @@
             $erreurDescription = COULEUR_MESSAGE_ERREUR;
         }
 
+        //S'il n'y a pas eu d'erreur alors on modife les données du jeu dans la base de donnée
+        // et le rend affichable dans la page d'accueil
         if (
             $erreurTitre != COULEUR_MESSAGE_ERREUR && $erreurVersion != COULEUR_MESSAGE_ERREUR
             && $erreurDescription != COULEUR_MESSAGE_ERREUR && $erreurDateSortie != COULEUR_MESSAGE_ERREUR
@@ -289,7 +309,7 @@
                 $trancheAge
             );
             $idJeuVideo = intval($idJeuVideo);
-            if (AjouterJeuAvecLiaisons(
+            if (ModifierJeuAvecLiaisons(
                 $idJeuProposer,
                 $contenuSensibleChoisies,
                 $genreChoisies,
@@ -297,18 +317,32 @@
             )) {
                 header("location: index.php");
                 exit;
+            } else {
+                echo "<script>alert(\"Jeu non modifiable. Une erreur s'est produite\")</script>";
             }
         }
     }
 
+    if (isset($_POST["supprimer"])) {
+        //Supprime le jeu de la base de donnée
+        if (SupprimerJeu($idJeuProposer)) {
+            header("location: index.php");
+            exit;
+        } else {
+            echo "<script>alert(\"Jeu non supprimable. Une erreur s'est produite\")</script>";
+        }
+    }
+
     if (isset($_POST["valider"])) {
+        //Rend le jeu affichable dans la page d'accueil
         if (ValiderJeu($idJeuProposer)) {
             header("location: index.php");
             exit;
         } else {
-            echo "<script>alert(\"Jeu non validable\")</script>";
+            echo "<script>alert(\"Jeu non validable. Une erreur s'est produite\")</script>";
         }
     }
+
     ?>
 
     <header>
@@ -339,7 +373,7 @@
     </header>
     <main>
 
-        <?php if ($utilisateur[0]->statut == 0) { ?>
+        <?php if ($utilisateur[0]->statut == 0 || $donneeJeuProposer == false) { ?>
             <form action="" method="POST" enctype="multipart/form-data">
                 <label for="titre" style="color:<?= $erreurTitre; ?>">Titre:</label><br>
                 <input type="text" name="titre" value="<?= $titre; ?>"><br>
@@ -350,12 +384,13 @@
                 <label for="dateSortie" style="color:<?= $erreurDateSortie; ?>">Date de sortie : </label><br>
                 <input type="date" name="dateSortie" value="<?= $dateSortie; ?>"><br>
 
-                <input type="hidden" name="MAX_FILE_SIZE" value="1000000">
-                <label for="imageEncode" style="color:<?= $erreurImageEncode; ?>">Image</label><br>
-                <input type="file" name="imageEncode" id="imageEncode" multiple accept="image/png, image/jpeg" value="<?= $imageEncode ?>"> <br>
+                <label for="imageEncode" style="color:<?= $erreurImageNom; ?>">Image</label><br>
+                <input type="file" name="imageEncode" id="imageEncode" multiple accept="image/png, image/jpeg" value="<?= $imageNom ?>"> <br>
 
                 <label for="plateforme" style="color:<?= $erreurPlateforme; ?>">Plateformes: </label><br>
                 <?php
+                //Parcours le tableau et affiche c'est données.
+                //Coche une de ses données si déjà séléctionné auparavant
                 foreach ($registrePlateforme as $plateforme) {
                     if (isset($_POST["plateforme"]) && in_array($plateforme->idPlateforme, $_POST["plateforme"])) {
                         $coche = "checked";
@@ -368,6 +403,8 @@
 
                 <label for="genre" style="color:<?= $erreurGenre; ?>">Genres: </label><br>
                 <?php
+                //Parcours le tableau et affiche c'est données.
+                //Coche une de ses données si déjà séléctionné auparavant
                 foreach ($registreGenre as $genre) {
                     if (isset($_POST["genre"]) && in_array($genre->idGenre, $_POST["genre"])) {
                         $coche = "checked";
@@ -380,6 +417,8 @@
                 <p>PEGI:</p>
                 <label for="contenuSensible" style="color:<?= $erreurContenuSensible; ?>">Contenu sensible: </label><br>
                 <?php
+                //Parcours le tableau et affiche c'est données.
+                //Coche une de ses données si déjà séléctionné auparavant
                 foreach ($registreContenuSensible as $contenuSensible) {
                     if (isset($_POST["contenuSensible"]) && in_array($contenuSensible->idPegi, $_POST["contenuSensible"])) {
                         $coche = "checked";
@@ -393,6 +432,8 @@
                 <label for="trancheAge" style="color:<?= $erreurTrancheAge; ?>">Tranche d'âge: </label><br>
                 <select name="trancheAge">
                     <?php
+                    //Parcours le tableau et affiche c'est données.
+                    //Coche une de ses données si déjà séléctionné auparavant
                     foreach ($listeTranchesAge as $tranchesAge) {
 
                         echo "<option value=\"" . $tranchesAge . "\"" . (isset($_POST['trancheAge']) && $_POST['trancheAge'] == $tranchesAge ? "selected" : false) . ">";
@@ -407,9 +448,91 @@
                 <input type="submit" name="proposer" class="btn btn-primary" value="Proposer"><br>
 
             </form>
-        <?php } else { ?>
+            <?php
+        } else {
+            foreach ($donneeJeuProposer as $jeuProposer) { ?>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <label for="titre" style="color:<?= $erreurTitre; ?>">Titre:</label><br>
+                    <input type="text" name="titre" value="<?= $jeuProposer->titre; ?>"><br>
 
-        <?php } ?>
+                    <label for="version" style="color:<?= $erreurVersion; ?>">Version du jeu : </label><br>
+                    <input type="number" name="version" step="0.1" value="<?= $jeuProposer->version; ?>"><br>
+
+                    <label for="dateSortie" style="color:<?= $erreurDateSortie; ?>">Date de sortie : </label><br>
+                    <input type="date" name="dateSortie" value="<?= $jeuProposer->dateSortie; ?>"><br>
+
+                    <label for="datePublication" style="color:<?= $erreurDatePublication; ?>">Date de publication : </label><br>
+                    <input type="date" name="datePublication" value="<?= $jeuProposer->datePublication; ?>"><br>
+
+                    <label for="imageEncode" style="color:<?= $erreurImageNom; ?>">Image</label><br>
+                    <input type="file" name="imageEncode" id="imageEncode" multiple accept="image/png, image/jpeg" value="<?= $jeuProposer->imageEncode ?>"> <br>
+
+                    <label for="plateforme" style="color:<?= $erreurPlateforme; ?>">Plateformes: </label><br>
+                    <?php
+                    //Parcours le tableau et affiche c'est données.
+                    //Coche une de ses données si déjà séléctionné auparavant
+                    foreach ($registrePlateforme as $plateforme) {
+                        if (isset($_POST["plateforme"]) && in_array($plateforme->idPlateforme, $_POST["plateforme"])) {
+                            $coche = "checked";
+                        } else {
+                            $coche = "";
+                        }
+                        echo "<input type=\"checkbox\" name=\"plateforme[]\" value=\"$plateforme->idPlateforme\" $coche>$plateforme->nomPlateforme<br>";
+                    }
+                    ?>
+
+                    <label for="genre" style="color:<?= $erreurGenre; ?>">Genres: </label><br>
+                    <?php
+                    //Parcours le tableau et affiche c'est données.
+                    //Coche une de ses données si déjà séléctionné auparavant
+                    foreach ($registreGenre as $genre) {
+                        if (isset($_POST["genre"]) && in_array($genre->idGenre, $_POST["genre"])) {
+                            $coche = "checked";
+                        } else {
+                            $coche = "";
+                        }
+                        echo "<input type=\"checkbox\" name=\"genre[]\" value=\"$genre->idGenre\" $coche>$genre->nomGenre<br>";
+                    }
+                    ?>
+                    <p>PEGI:</p>
+                    <label for="contenuSensible" style="color:<?= $erreurContenuSensible; ?>">Contenu sensible: </label><br>
+                    <?php
+                    //Parcours le tableau et affiche c'est données.
+                    //Coche une de ses données si déjà séléctionné auparavant
+                    foreach ($registreContenuSensible as $contenuSensible) {
+                        if (isset($_POST["contenuSensible"]) && in_array($contenuSensible->idPegi, $_POST["contenuSensible"])) {
+                            $coche = "checked";
+                        } else {
+                            $coche = "";
+                        }
+                        echo "<input type=\"checkbox\" name=\"contenuSensible[]\" value=\"$contenuSensible->idPegi\" $coche>$contenuSensible->contenuSensible<br>";
+                    }
+                    ?>
+
+                    <label for="trancheAge" style="color:<?= $erreurTrancheAge; ?>">Tranche d'âge: </label><br>
+                    <select name="trancheAge">
+                        <?php
+                        //Parcours le tableau et affiche c'est données.
+                        //Coche une de ses données si déjà séléctionné auparavant
+                        foreach ($listeTranchesAge as $tranchesAge) {
+
+                            echo "<option value=\"" . $tranchesAge . "\"" . (isset($_POST['trancheAge']) && $_POST['trancheAge'] == $tranchesAge ? "selected" : false) . ">";
+                            echo $tranchesAge;
+                            echo '</option>';
+                        }
+                        ?>
+                    </select><br>
+
+                    <label for="description" style="color:<?= $erreurDescription; ?>">Description du jeu : </label><br>
+                    <textarea name="description" cols="30" rows="10"><?= $jeuProposer->description ?></textarea>
+                    <input type="submit" name="valider" class="btn btn-success" value="Valider">
+                    <input type="submit" name="modifier" class="btn btn-warning" value="Modifier">
+                    <input type="submit" name="supprimer" class="btn btn-danger" value="Supprimer">
+
+                </form>
+        <?php  }
+        }
+        ?>
     </main>
     <footer>
         &copy;Fait par Mofassel Haque Srijon Rahman <br>

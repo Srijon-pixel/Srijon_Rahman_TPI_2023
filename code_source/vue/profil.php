@@ -26,13 +26,14 @@
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -91,7 +92,10 @@
     </header>
     <main>
         <form action="#" method="POST">
-            <?php foreach ($donneesUtilisateur as $utilisateur) {
+
+            <?php
+            //Parcours le tableau comportant les donnée de l'utilisateur connecté et les affiches
+            foreach ($donneesUtilisateur as $utilisateur) {
 
                 echo "<label for=\"nom\">Votre nom :</label><br>";
                 echo "<input type=\"text\" name=\"nom\" value=\"" . $utilisateur->nom . "\" readonly><br>";
@@ -111,7 +115,8 @@
                 } else {
                     echo "<input type=\"text\" name=\"statut\" value=\"administrateur\" readonly><br>";
                 };
-            } ?>
+            }
+            ?>
             <a href="./modifierMotDePasse.php" class="btn btn-primary">Modifier le mot de passe</a>
             <a href="./modifierCompte.php" class="btn btn-primary">Modifier le compte</a>
         </form>

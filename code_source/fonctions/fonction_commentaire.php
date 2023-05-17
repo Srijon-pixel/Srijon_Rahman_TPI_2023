@@ -4,23 +4,25 @@
  * Auteur: Mofassel Haque Srijon Rahman
  * Date: 04.05.2023
  * Projet: TPI video game club
- * Détail: Regroupe toutes les fonctionnalités pour les commentaires sur les jeux vidéo du sites
+ * Détail: Regroupe toutes les fonctionnalités pour les commentaires des jeux vidéo du site
  */
-require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php'; // connection à la base de données
+//La classe nécesssaire pour afficher ou ajouter les données.
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/commentaire.php';
 
 
 
 /**
- * Récupère touts les jeux vidéo de la base de donnée
- *
+ * Récupère touts les commentaires d'un jeu vidéo de la base de donnée à partir de l'identifiant du jeu
+ * @param int $idJeuvideo l'identifiant du jeu video
  * @return array|bool Un tableau des ECommentaire
  *                    False si une erreur
  */
 function RecupereCommentaireJeuParId($idJeuVideo)
 {
-    $arr = array();
+    $tableau = array();
 
+    //Requête SQL a executé 
     $sql = "SELECT `commentaire`.`idCommentaire`, `commentaire`.`commentaire`, `commentaire`.`dateCommentaire`, 
     `utilisateur`.`pseudo`
     FROM `commentaire`
@@ -45,17 +47,21 @@ function RecupereCommentaireJeuParId($idJeuVideo)
 
         );
         // On place l'objet ECommentaire créé dans le tableau
-        array_push($arr, $c);
+        array_push($tableau, $c);
     }
 
     // Done
-    return $arr;
+    return $tableau;
 }
 
 
 /**
- * Insère le commentaire d'un utilisateur dans la base de donnée
- *
+ * Insère le commentaire d'un utilisateur à un jeu dans la base de donnée
+ * @param string $commentaire le commentaire de l'utilisateur
+ * @param string $dateCommentaire la date commentaire écris par l'utilisateur
+ * @param int $idUtilisateur l'identifiant de l'utilisateur
+ * @param int $idJeuvideo l'identifiant du jeu video
+ * 
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
 function AjouterCommentaire(
@@ -64,6 +70,7 @@ function AjouterCommentaire(
     $idUtilisateur,
     $idJeuvideo
 ) {
+    //Requête SQL a executé 
     $sql = "INSERT INTO `commentaire` (`commentaire`, `dateCommentaire`,`idUtilisateur`,`idJeuvideo`) 
 	VALUES(:c,:dc,:iu,:ij)";
     $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -76,26 +83,3 @@ function AjouterCommentaire(
     return true;
 }
 
-
-/**
- * Modifie les données du commentaire dans la base de donnée
- *
- * @return bool true si la requête a été correctement effectué, sinon false 
- */
-function ModifierCommentaire(
-    $idCommentaire,
-    $commentaire,
-    $dateCommentaire
-) {
-    $sql = "UPDATE `commentaire`
-    SET `commentaire`.`commentaire` = :c, `commentaire`.`dateCommentaire` = :dc
-	WHERE `commentaire`.`idCommentaire` = :ic";
-    $statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-    try {
-        $statement->execute(array(":ic" => $idCommentaire, ":c" => $commentaire, ":dc" => $dateCommentaire));
-    } catch (PDOException $e) {
-        return false;
-    }
-    // Done
-    return true;
-}

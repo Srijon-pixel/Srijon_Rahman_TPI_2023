@@ -6,7 +6,7 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les seesions d'utilisateurs du sites
  */
-
+//Les classes nécesssaire pour récupéré les données de sessions à l'aide de leur identifiant.
  require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
  require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_jeuVideo.php';
 
@@ -17,6 +17,11 @@ const SESSION_CLE_ID_UTILISATEUR = "idUtilisateur";
 const SESSION_CLE_ID_JEU = "idJeu";
 
 
+/**
+ * Recherche l'utilisateur dans la session
+ *
+ * @return EUtilisateur|false  l'utilisateur si identifié, autrement false
+ */
 function RecupereUtilisateurParSession()
 {
     if (!DebutSession()) {
@@ -28,6 +33,11 @@ function RecupereUtilisateurParSession()
     return false;
 }
 
+/**
+ * Recherche le jeu vidéo dans la session
+ *
+ * @return EJeuVideo|false  le jeu vidéo si existe, autrement false
+ */
 function RecupereJeuParSession()
 {
     if (!DebutSession()) {
@@ -39,6 +49,11 @@ function RecupereJeuParSession()
     return false;
 }
 
+/**
+ * Démarre une session
+ * 
+ * @return bool true si la session est démarrée, autrement false
+ */
 function DebutSession()
 {
     if (session_status() === PHP_SESSION_ACTIVE) {

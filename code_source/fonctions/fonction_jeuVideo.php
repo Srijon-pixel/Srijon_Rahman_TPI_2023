@@ -6,7 +6,9 @@
  * Projet: TPI video game club
  * Détail: Regroupe toutes les fonctionnalités pour les jeux vidéo du sites
  */
-require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/bd/base_de_donnee.php'; // connection à la base de données
+//Les classes nécesssaire pour afficher, ajouter, modifier ou supprimer les données.
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/jeuVideo.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/genre.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/plateforme.php';
@@ -20,9 +22,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/classe/pegi.php';
  * @return array|bool Un tableau des EJeuVideo
  *                    False si une erreur
  */
-function RecupereToutLesJeuxVideo()
+function RecupereJeuxVideoPublie()
 {
-	$arr = array();
+	$tableau = array();
 
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
 	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
@@ -43,7 +45,7 @@ function RecupereToutLesJeuxVideo()
 	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
     JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
 
-	WHERE `jeuVideo`.`proposition` = 0 AND `jeuVideo`.`datePublication` = CURRENT_DATE()
+	WHERE `jeuVideo`.`proposition` = 0 AND `jeuVideo`.`datePublication` <= CURRENT_DATE()
     GROUP BY `jeuvideo`.`idJeuVideo`
 	ORDER BY `jeuVideo`.`datePublication` DESC LIMIT 20;";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -72,22 +74,48 @@ function RecupereToutLesJeuxVideo()
 
 		);
 		// On place l'objet EJeuVideo créé dans le tableau
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
 
 	// Done
-	return $arr;
+	return $tableau;
 }
 
 /**
- * Récupère le jeu vidéo à l'aide de son identifiant de la base de donnée
+ * Récupère le nombre de jeux vidéo de la base de données
  *
+ * @return array|bool Un tableau des EJeuVideo
+ *                    False si une erreur
+ */
+function RecupereNombreJeux()
+{
+	$tableau = array();
+	$sql = "SELECT COUNT(`jeuvideo`.`idJeuVideo`) AS `Nombre de jeu` FROM `jeuvideo`;";
+	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+	try {
+		$statement->execute();
+	} catch (PDOException $e) {
+		return false;
+	}
+	// On parcoure les enregistrements 
+	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		$c = array($row["Nombre de jeu"]);
+		array_push($tableau, $c);
+	}
+
+	return $tableau;
+}
+
+
+/**
+ * Récupère les données d'un jeu vidéo à l'aide de son identifiant
+ * param int $idJeuVideo l'identifiant du jeu vidéo
  * @return array|bool Un tableau des EJeuVideo
  *                    False si une erreur
  */
 function RecupereJeuVideoParId($idJeuVideo)
 {
-	$arr = array();
+	$tableau = array();
 
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
 	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
@@ -134,31 +162,31 @@ function RecupereJeuVideoParId($idJeuVideo)
 
 		);
 		// On place l'objet EJeuVideo créé dans le tableau
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
 
 	// Done
-	return $arr;
+	return $tableau;
 }
 
 
 /**
- * Récupère le jeu vidéo à l'aide de son identifiant de la base de donnée
+ * Récupère le jeu vidéo proposé dans la base de données
  *
  * @return array|bool Un tableau des EJeuVideo
  *                    False si une erreur
  */
 function RecupereJeuVideoProposer()
 {
-	$arr = array();
+	$tableau = array();
 
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
 	`jeuVideo`.`datePublication`,  `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
 	 `jeuVideo`.`proposition`,
 
-	GROUP_CONCAT(DISTINCT `genre`.`nomGenre` SEPARATOR \", \") AS `genres`, 
-	GROUP_CONCAT(DISTINCT `plateforme`.`nomPlateforme` SEPARATOR \", \") AS `plateformes`,
-	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
+	GROUP_CONCAT(DISTINCT `genre`.`idGenre` SEPARATOR \", \") AS `genres`, 
+	GROUP_CONCAT(DISTINCT `plateforme`.`idPlateforme` SEPARATOR \", \") AS `plateformes`,
+	GROUP_CONCAT(DISTINCT `pegi`.`idPegi` SEPARATOR \", \") AS `contenu sensibles`
     FROM `jeuVideo` 
     
     JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
@@ -170,7 +198,8 @@ function RecupereJeuVideoProposer()
 	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
     JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
 
-    WHERE `jeuVideo`.`proposition` = 1";
+    WHERE `jeuVideo`.`proposition` = 1
+	GROUP BY `jeuvideo`.`idJeuVideo`";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute();
@@ -193,29 +222,35 @@ function RecupereJeuVideoProposer()
 			$row['genres'],
 			$row['plateformes'],
 			$row['trancheAge'],
-			$row['contenu sensible']
+			$row['contenu sensibles']
 
 		);
 		// On place l'objet EJeuVideo créé dans le tableau
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
 
 	// Done
-	return $arr;
+	return $tableau;
 }
 
 
 
 /**
- * Insère l'utilisateur dans la base de donnée
- *
+ * Insère le jeu vidéo dans la base de donnée
+ * @param string $titre le titre du jeu
+ * @param string $version la version du jeu
+ * @param string $dateSortie la date de sortie du jeu
+ * @param string $imageContenu le contenu de l'image du jeu
+ * @param string $imageType le type de l'image du jeu
+ * @param string $description la description du du jeu
+ * @param string $trancheAge la tranche d'âge du jeu
  * @return int|false Retourne l'identifiant du dernier jeu ajouté, sinon false 
  */
 function AjouterJeu(
 	$titre,
 	$version,
 	$dateSortie,
-	$imageEncode,
+	$imageContenu,
 	$imageType,
 	$description,
 	$trancheAge
@@ -223,7 +258,7 @@ function AjouterJeu(
 	$sql = "INSERT INTO `jeuVideo` (`titre`, `version`,`dateSortie`,`datePublication`,
 	`imageEncode`,`description`,`trancheAge`,`proposition`) 
 	VALUES(:t,:v,:ds,null,:ie,:d,:ta,1)";
-	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageEncode);
+	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageContenu);
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(
@@ -240,7 +275,11 @@ function AjouterJeu(
 
 /**
  * Insère les données supllémentaires dans les tables de liasons dans la base de donnée
- *
+
+ * @param int $idJeuVideo l'identifiant du jeu
+ * @param array $tableauIdPegi les différents identifiant pour les contenus sensible
+ * @param array $tableauIdGenre les différents identifiant pour les genres
+ * @param array $tableauIdPlateforme les différents identifiant pour les plateformes
  * @return bool true si l'insertion a été correctement effectué, sinon false 
  */
 function AjouterJeuAvecLiaisons(
@@ -283,6 +322,7 @@ function AjouterJeuAvecLiaisons(
 /** 
  * Supprime définitivement le jeu vidéo de la base de donnée 
  * @param int $idJeuvideo identifiant du jeu
+ * @return bool true si la suppression a été correctement effectué, sinon false 
  */
 function SupprimerJeu($idJeuvideo)
 {
@@ -299,7 +339,16 @@ function SupprimerJeu($idJeuvideo)
 
 /**
  * Modifie les données du jeu vidéo dans la base de données
- *
+ * 
+ * @param int $idJeuvideo identifiant du jeu
+ * @param string $titre le titre du jeu
+ * @param string $version la version du jeu
+ * @param string $dateSortie la date de sortie du jeu
+ * @param string $datePublication la date de publication du jeu
+ * @param string $imageContenu le contenu de l'image du jeu
+ * @param string $imageType le type de l'image du jeu
+ * @param string $description la description du du jeu
+ * @param string $trancheAge la tranche d'âge du jeu
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
 function ModifierJeu(
@@ -308,7 +357,7 @@ function ModifierJeu(
 	$version,
 	$dateSortie,
 	$datePublication,
-	$imageEncode,
+	$imageContenu,
 	$imageType,
 	$description,
 	$trancheAge
@@ -317,7 +366,7 @@ function ModifierJeu(
 	SET `jeuVideo`.`titre` = :t, `jeuVideo`.`version` = :v, `jeuVideo`.`dateSortie` = :ds, 
 	`jeuVideo`.`datePublication` = :dp, `jeuVideo`.`imageEncode` = :ie, 
 	`jeuVideo`.`description` = :d, `jeuVideo`.`trancheAge` = :ta, `jeuVideo`.`proposition` = 0 WHERE `jeuVideo`.`idJeuVideo` = :ij";
-	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageEncode);
+	$imageEncode = 'data:' . $imageType . ';base64,' . base64_encode($imageContenu);
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
 		$statement->execute(array(
@@ -333,7 +382,10 @@ function ModifierJeu(
 
 /**
  * Modifie les données supplémentaires dans les tables de liaisons du jeu vidéo dans la base de données
- *
+ * @param int $idJeuVideo l'identifiant du jeu
+ * @param array $tableauIdPegi les différents identifiant pour les contenus sensible
+ * @param array $tableauIdGenre les différents identifiant pour les genres
+ * @param array $tableauIdPlateforme les différents identifiant pour les plateformes
  * @return bool true si la requête a été correctement effectué, sinon false 
  */
 function ModifierJeuAvecLiaisons(
@@ -372,6 +424,12 @@ function ModifierJeuAvecLiaisons(
 	return true;
 }
 
+/**
+ * Valide le jeu et le rend affichable dans le site
+ *
+ * @param int $idJeuVideo l'identifiant du jeu
+ * @return bool true si la requête a été correctement effectué, sinon false 
+ */
 function ValiderJeu($idJeuVideo)
 {
 	$sql = "UPDATE `jeuVideo`
@@ -388,15 +446,19 @@ function ValiderJeu($idJeuVideo)
 }
 
 /**
- * Fonction sur la recherche
+ * Fonction sur la recherche d'un jeu vidéo
  *
- * @param string $motCle
+ * @param string $titreCle le titre recherché
+ * @param string $genre le ou les genres recherché(s)
+ * @param string $plateforme la ou les plateformes recherchée(s)
+ * @param string $ageMin l'âge minimum recherché
+ * @param string $ageMax l'âge maximum recherché
  * @return array|bool Un tableau des EJeuVideo
  *                    False si une erreur
  */
-function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
+function RechercherJeu($titreCle, $genre, $plateforme, $ageMin, $ageMax)
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `jeuVideo`.`idJeuVideo`, `jeuVideo`.`titre`, `jeuVideo`.`version`, `jeuVideo`.`dateSortie`, 
 	`jeuVideo`.`datePublication`, `jeuVideo`.`imageEncode`, `jeuVideo`.`description`, `jeuVideo`.`trancheAge`,
 	 `jeuVideo`.`proposition`, 
@@ -406,7 +468,6 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 	GROUP_CONCAT(DISTINCT `pegi`.`contenuSensible` SEPARATOR \", \") AS `contenu sensible`
 
     FROM `jeuVideo` 
-
     
     JOIN `liaison_genre_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_genre_jeu`.`idJeuVideo`
     JOIN `genre` ON `liaison_genre_jeu`.`idGenre` = `genre`.`idGenre` 
@@ -417,7 +478,7 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 	JOIN `liaison_pegi_jeu` ON `jeuvideo`.`idJeuVideo` = `liaison_pegi_jeu`.`idJeuVideo`
     JOIN `pegi` ON `liaison_pegi_jeu`.`idPegi` = `pegi`.`idPegi` 
 
-    WHERE `jeuvideo`.`titre` LIKE '%$motCle%' AND `genre`.`nomGenre` LIKE '%$genre%' AND `plateforme`.`nomPlateforme` LIKE '%$plateforme%'
+    WHERE `jeuvideo`.`titre` LIKE '%$titreCle%' AND `genre`.`nomGenre` LIKE '%$genre%' AND `plateforme`.`nomPlateforme` LIKE '%$plateforme%'
 	AND `jeuvideo`.`trancheAge` <= $ageMax AND `jeuvideo`.`trancheAge` >= $ageMin AND `jeuVideo`.`proposition` = 0
 	
 	GROUP BY `jeuvideo`.`idJeuVideo`
@@ -428,7 +489,10 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 	} catch (PDOException $e) {
 		return false;
 	}
+	// On parcoure les enregistrements 
 	while ($row = $statement->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+		// On crée l'objet EJeuVideo en l'initialisant avec les données provenant
+		// de la base de données
 		$c = new EJeuVideo(
 			intval($row['idJeuVideo']),
 			$row['titre'],
@@ -444,9 +508,10 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
 			$row['contenu sensible']
 
 		);
-		array_push($arr, $c);
+		// On place l'objet EJeuVideo créé dans le tableau
+		array_push($tableau, $c);
 	}
-	return $arr;
+	return $tableau;
 }
 
 /**
@@ -457,7 +522,7 @@ function RechercherJeu($motCle, $genre, $plateforme, $ageMin, $ageMax)
  */
 function RecupereGenre()
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `genre`.`idGenre`, `genre`.`nomGenre` FROM `genre`";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -470,9 +535,9 @@ function RecupereGenre()
 			intval($row['idGenre']),
 			$row['nomGenre']
 		);
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
-	return $arr;
+	return $tableau;
 }
 
 /**
@@ -483,7 +548,7 @@ function RecupereGenre()
  */
 function RecuperePlateforme()
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `plateforme`.`idPlateforme`, `plateforme`.`nomPlateforme` FROM `plateforme`";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -496,9 +561,9 @@ function RecuperePlateforme()
 			intval($row['idPlateforme']),
 			$row['nomPlateforme']
 		);
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
-	return $arr;
+	return $tableau;
 }
 
 /**
@@ -509,7 +574,7 @@ function RecuperePlateforme()
  */
 function RecupereContenuSensible()
 {
-	$arr = array();
+	$tableau = array();
 	$sql = "SELECT `pegi`.`idPegi`, `pegi`.`contenuSensible` FROM `pegi`";
 	$statement = EBaseDonnee::prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
 	try {
@@ -522,7 +587,7 @@ function RecupereContenuSensible()
 			intval($row['idPegi']),
 			$row['contenuSensible']
 		);
-		array_push($arr, $c);
+		array_push($tableau, $c);
 	}
-	return $arr;
+	return $tableau;
 }

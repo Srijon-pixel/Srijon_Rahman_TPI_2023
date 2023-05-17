@@ -29,9 +29,11 @@
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_jeuVideo.php';
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_notation.php';
 
+    //Constantes
     const DETAIL_BUTTON = "Détail";
     const COULEUR_MESSAGE_ERREUR = "red";
 
+    //Variables
     $titreCle = "";
     $plateforme = array();
     $genre = array();
@@ -47,13 +49,14 @@
     $idDetailJeu = -1;
 
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -73,23 +76,26 @@
     }
 
 
+    
     if (isset($_POST['DET'])) {
         $idDetailJeu = intval(filter_input(INPUT_POST, "jeu"));
         $_SESSION['idJeu'] = $idDetailJeu;
         header('Location: detailJeu.php');
     }
 
+
     if (isset($_POST["rechercher"])) {
 
+        //Filtarge + Traitement des données
         $titreCle = filter_input(INPUT_POST, "titreCle");
         $titreCle = antiInjectionXSS($titreCle);
         $ageMin = filter_input(INPUT_POST, "ageMin", FILTER_SANITIZE_NUMBER_INT);
         $ageMax = filter_input(INPUT_POST, "ageMax", FILTER_SANITIZE_NUMBER_INT);
 
-        if ($ageMin <= 2 || $ageMin >= 19 || $ageMin == null) {
+        if ($ageMin <= -1 || $ageMin >= 19) {
             $erreurAgeMin = COULEUR_MESSAGE_ERREUR;
         }
-        if ($ageMax <= 2 || $ageMax >= 19 || $ageMax == null) {
+        if ($ageMax <= -1 || $ageMax >= 19) {
             $erreurAgeMax = COULEUR_MESSAGE_ERREUR;
         }
 
@@ -102,7 +108,7 @@
         // Récupère les valeurs sélectionnées pour la catégorie plateforme
         if (isset($_POST['plateforme'])) {
             $plateforme = $_POST['plateforme'];
-            $plateformes = implode(",", $plateforme);
+            $plateformes = implode(",", $plateforme);  // Met toutes les valeurs dans une chaîne de caractères séparée par une virgule
         }
 
         if ($erreurAgeMin != COULEUR_MESSAGE_ERREUR && $erreurAgeMax != COULEUR_MESSAGE_ERREUR) {
@@ -113,19 +119,20 @@
         } else {
 
             echo '<script>alert("Veuillez remplire les champs correctement s\'il vous plaît")</script>';
-            $registreJeu = RecupereToutLesJeuxVideo();
+            $registreJeu = RecupereJeuxVideoPublie();
             if ($registreJeu === false) {
                 echo '<script>alert("Les données des jeux ne peuvent être affichées. Une erreur s\'est produite.")</script>';
             }
         }
     } else {
 
-        $registreJeu = RecupereToutLesJeuxVideo();
+        $registreJeu = RecupereJeuxVideoPublie();
         if ($registreJeu === false) {
             echo '<script>alert("Les données des jeux ne peuvent être affichées. Une erreur s\'est produite.")</script>';
         }
     }
-   
+
+    //Récupération des données sur les genres et les plateformes
     $registreGenre = RecupereGenre();
     if ($registreGenre === false) {
         echo '<script>alert("Les genres de jeu vidéo ne peuvent être affichées. Une erreur s\'est produite.")</script>';
@@ -135,7 +142,9 @@
         echo '<script>alert("Les plateformes des jeux vidéo ne peuvent être affichées. Une erreur s\'est produite.")</script>';
     }
 
-    $nombreJeux = count(RecupereToutLesJeuxVideo());
+    
+    $nombreJeux = RecupereNombreJeux();
+    $nombreJeux = $nombreJeux[0][0];
     $nombreJeuxRecherche = count(RechercherJeu($titreCle, $genres, $plateformes, $ageMin, $ageMax));
     ?>
 
@@ -167,16 +176,18 @@
     </header>
     <main>
         <aside>
-            <p>Nombre de jeux vidéo: <?= $nombreJeux; ?> </p><br>
+            <p>Nombre de jeux vidéo: <?= $nombreJeux; ?></p><br>
             <p>Nombre de jeux vidéo trouvé: <?= $nombreJeuxRecherche; ?> </p><br>
 
             <form action="" method="POST">
                 <label for="ageMin" style="color:<?= $erreurAgeMin; ?>">Âge minimum: </label><br>
-                <input type="number" name="ageMin" min="3" max="18" value="<?= $ageMin ?>"><br>
+                <input type="number" name="ageMin" min="0" max="18" value="<?= $ageMin ?>"><br>
                 <label for="ageMax" style="color:<?= $erreurAgeMax; ?>">Âge maximum: </label><br>
-                <input type="number" name="ageMax" min="3" max="18" value="<?= $ageMax ?>">
+                <input type="number" name="ageMax" min="0" max="18" value="<?= $ageMax ?>">
                 <p>Plateformes:</p>
                 <?php
+                //Parcours le tableau et affiche c'est données.
+                //Coche une de ses données si déjà séléctionné auparavant
                 foreach ($registrePlateforme as $plateforme) {
                     if (isset($_POST["plateforme"]) && in_array($plateforme->nomPlateforme, $_POST["plateforme"])) {
                         $coche = "checked";
@@ -189,6 +200,9 @@
 
                 <p>Genres:</p>
                 <?php
+                //Parcours le tableau et affiche c'est données.
+                //Coche une de ses données si déjà séléctionné auparavant
+
                 foreach ($registreGenre as $genre) {
                     if (isset($_POST["genre"]) && in_array($genre->nomGenre, $_POST["genre"])) {
                         $coche = "checked";
@@ -198,7 +212,6 @@
                     echo "<input type=\"checkbox\" name=\"genre[]\" value=\"$genre->nomGenre\" $coche>$genre->nomGenre<br>";
                 }
                 ?>
-
 
                 <div class="search-container">
 

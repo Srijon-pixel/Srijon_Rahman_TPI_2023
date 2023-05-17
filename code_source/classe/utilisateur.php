@@ -1,7 +1,9 @@
 <?php
 
 /**
- * 
+ * Projet: TPI video game club
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Détail: Classe pour crée un objet EUtilisateur
  */
 class EUtilisateur
 {

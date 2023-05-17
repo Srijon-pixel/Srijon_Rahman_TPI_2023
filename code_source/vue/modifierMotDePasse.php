@@ -1,10 +1,11 @@
 <?php
+
 /**
-* Auteur: Mofassel Haque Srijon Rahman
-* Date: 27.04.2023
-* Projet: TPI video game club
-* Détail: Page permettant à l'utilisateur de modifier son mot de passe
-*/
+ * Auteur: Mofassel Haque Srijon Rahman
+ * Date: 27.04.2023
+ * Projet: TPI video game club
+ * Détail: Page permettant à l'utilisateur de modifier son mot de passe
+ */
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -36,13 +37,14 @@
     $motDePasse = "";
     $erreurMotDePasse = "";
 
-    $utilisateur = RecupereUtilisateurParSession();
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -65,20 +67,21 @@
         }
     }
 
-
+    //Si l'utilisateur veut modifier sont mot de passe
     if (isset($_POST['modifierMotDePasse'])) {
+        //Récupère l'identifiant de l'utilisateur
         $idUtilisateur = intval($utilisateur[0]->idUtilisateur);
-
+        //Filtrage + Traitements des données
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
-        if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
+        if (MotDePasseSyntax($motDePasse) == false || $motDePasse == "") {
             echo '<script>alert("Veuillez écrire votre mot de passe correctement. 
             Il vous faut au minimum une majuscule, une minuscule, un chiffre et 8 caractères ")</script>';
             $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
         if ($idUtilisateur > 0 &&  $erreurMotDePasse != COULEUR_MESSAGE_ERREUR) {
-            if (modifierMotDePasse($idUtilisateur, $motDePasse)) {
+            if (ModifierMotDePasse($idUtilisateur, $motDePasse)) {
                 header('Location: profil.php');
                 exit;
             }

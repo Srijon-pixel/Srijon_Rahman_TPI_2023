@@ -4,7 +4,7 @@
  * Auteur: Mofassel Haque Srijon Rahman
  * Date: 27.04.2023
  * Projet: TPI video game club
- * Détail: Page permettant à l'utilisateur de créer son compte enceint du site
+ * Détail: Page permettant à l'utilisateur de créer son compte au sein du site
  */
 ?>
 <!DOCTYPE html>
@@ -22,12 +22,14 @@
 <body>
     <?php
 
-    //Permet d'utiliser les fonctions du fichier 
+    //Permet d'utiliser les fonctions des fichiers 
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_utilisateur.php';
     require_once $_SERVER['DOCUMENT_ROOT'] . '/fonctions/fonction_session.php';
 
+    //Constante
     const COULEUR_MESSAGE_ERREUR = "red";
 
+    //Variable
     $nom = "";
     $prenom = "";
     $pseudo = "";
@@ -40,13 +42,15 @@
     $erreurEmail = "";
     $erreurMotDePasse = "";
 
-    $utilisateur = RecupereUtilisateurParSession();
+
+    $utilisateur = RecupereUtilisateurParSession(); //Récupère les données de l'utilisateur s'il est connecté
     $nomUtilisateur = 'invité';
     $boutonDirection = '/identification.php';
     $boutonTexte = 'Connexion';
     $boutonParametre = '';
     $nomConnexionDeconnexion = "connexion";
 
+    //S'il est connecté
     if ($utilisateur != false) {
         $nomUtilisateur = $utilisateur[0]->pseudo;
         $nomConnexionDeconnexion = "deconnexion";
@@ -66,9 +70,10 @@
     }
 
 
-
+    //S'l'utilisateur veut s'inscrire
     if (isset($_POST['inscription'])) {
 
+        //Filtrage + Traitement des données
         $nom = filter_input(INPUT_POST, 'nom');
         $nom = antiInjectionXSS($nom);
 
@@ -107,15 +112,18 @@
 
         $motDePasse = filter_input(INPUT_POST, 'motDePasse');
         $motDePasse = antiInjectionXSS($motDePasse);
-        if (motDePasseSyntax($motDePasse) == false || $motDePasse == "") {
-            echo '<script>alert("Veuillez écrire votre mot de passe correctement. Il vous faut au minimum une majuscule, une minuscule, un chiffre et 8 caractères ")</script>';
+        if (MotDePasseSyntax($motDePasse) == false || $motDePasse == "") {
+            echo '<script>alert("Veuillez écrire votre mot de passe correctement. 
+            Il vous faut au minimum une majuscule, une minuscule, un chiffre et 8 caractères ")</script>';
             $erreurMotDePasse = COULEUR_MESSAGE_ERREUR;
         }
 
+        //S'il n'y a pas eu d'erreur durant le filtrage et le traitement des données
         if (
             $erreurNom != COULEUR_MESSAGE_ERREUR && $erreurPrenom != COULEUR_MESSAGE_ERREUR
             && $erreurPseudo != COULEUR_MESSAGE_ERREUR && $erreurEmail != COULEUR_MESSAGE_ERREUR && $erreurMotDePasse != COULEUR_MESSAGE_ERREUR
         ) {
+            //alors on ajoute l'utilisateur à la base de données
             if (AjouterUtilisateur($nom, $prenom, $pseudo, $email, $motDePasse)) {
                 header('Location: identification.php');
                 exit;
